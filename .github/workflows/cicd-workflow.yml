@@ -45,28 +45,20 @@ jobs:
             --push \
             .
 
-      # EC2 배포 (native ssh)
-      - name: Deploy to EC2
+      # EC2 배포
+      - name: Deploy to EC2 (docker-compose)
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
           EC2_KEY: ${{ secrets.EC2_SSH_KEY }}
-          DB_URL: ${{ secrets.DB_URL }}
-          DB_USERNAME: ${{ secrets.DB_USERNAME }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         run: |
           echo "$EC2_KEY" > key.pem
           chmod 400 key.pem
 
           ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$EC2_HOST << EOF
-            docker pull $DOCKER_USER/myapp:latest
-            docker stop payper-app || true
-            docker rm payper-app || true
-            docker run -d \
-              --name payper-app \
-              -p 8080:8080 \
-              -e DB_URL="$DB_URL" \
-              -e DB_USERNAME="$DB_USERNAME" \
-              -e DB_PASSWORD="$DB_PASSWORD" \
-              $DOCKER_USER/myapp:latest
+            cd payper
+            docker compose pull
+            docker compose down
+            docker compose up -d
           EOF
+      
