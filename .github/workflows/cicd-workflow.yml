@@ -39,10 +39,17 @@ jobs:
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
-          timeout: 120s
-          command_timeout: 20m
           script: |
-              docker pull answl/myapp:latest
-              docker compose up -d
+            docker pull answl/myapp:latest
+            docker stop payper-app || true
+            docker rm payper-app || true
+            docker run -d \
+              --name payper-app \
+              -p 8080:8080 \
+              -e DB_URL=${{ secrets.DB_URL }} \
+              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+              answl/myapp:latest
+      
