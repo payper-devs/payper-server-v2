@@ -1,18 +1,18 @@
 package com.payper.server.card.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
 
-@Entity
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "card_company")
-public class CardCompany {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private String name;
+@Getter
+public enum CardCompany {
+    KUKMIN,
+    HYUNDAI,
+    SAMSUNG,
+    NONGHYUP,
+    BC,
+    SHINHAN,
+    CITI,
+    WOORI,
+    LOTTE,
+    HANA,
+    IBK
 }

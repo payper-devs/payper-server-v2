@@ -17,7 +17,6 @@ public class Plan {
     @Column(nullable = false)
     private String name;
 
-    // TODO: 테이블로 빼는 게 더 나을까? CardCompany랑 비교하기
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TelecomCompany company;

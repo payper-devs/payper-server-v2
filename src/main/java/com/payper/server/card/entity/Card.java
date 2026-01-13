@@ -17,8 +17,7 @@ public class Card {
     @Column(nullable = false)
     private String name;
 
-    // TODO: enum으로 하는 게 더 나을까? TelecomCompany랑 비교하기
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
     @JoinColumn(nullable = false)
     private CardCompany company;
 }
