@@ -1,4 +1,4 @@
-name: cicd-workflow.yml
+name: CI/CD Deploy to EC2
 
 on:
   push:
@@ -21,29 +21,52 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Grant gradlew permission
+        run: chmod +x gradlew
+
       - name: Build JAR
         run: ./gradlew clean build -x test
 
-      - name: Docker login
+      # buildx 세팅 (amd64)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Docker Hub Login
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build & Push Docker Image
+      - name: Build & Push Docker Image (amd64)
         run: |
-          docker build -t answl/myapp:latest .
-          docker push answl/myapp:latest
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${{ secrets.DOCKERHUB_USERNAME }}/myapp:latest \
+            --push \
+            .
 
+      # EC2 배포 (native ssh)
       - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            docker pull answl/myapp:latest
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_KEY: ${{ secrets.EC2_SSH_KEY }}
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+        run: |
+          echo "$EC2_KEY" > key.pem
+          chmod 400 key.pem
+
+          ssh -o StrictHostKeyChecking=no -i key.pem ec2-user@$EC2_HOST << EOF
+            docker pull $DOCKER_USER/myapp:latest
             docker stop payper-app || true
             docker rm payper-app || true
-            docker run -d --name payper-app -p 8080:8080 -e DB_URL=${{ secrets.DB_URL }} -e DB_USERNAME=${{ secrets.DB_USERNAME }} -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} answl/myapp:latest
-      
+            docker run -d \
+              --name payper-app \
+              -p 8080:8080 \
+              -e DB_URL="$DB_URL" \
+              -e DB_USERNAME="$DB_USERNAME" \
+              -e DB_PASSWORD="$DB_PASSWORD" \
+              $DOCKER_USER/myapp:latest
+          EOF
