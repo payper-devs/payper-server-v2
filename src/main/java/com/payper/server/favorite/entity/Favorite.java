@@ -1,16 +1,16 @@
 package com.payper.server.favorite.entity;
 
+import com.payper.server.merchant.entity.Merchant;
 import com.payper.server.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_favorite_user_target",
-                columnNames = {"user_id", "target_type", "target_id"}
+                name = "uk_favorite_user_merchant",
+                columnNames = {"user_id", "merchant_id"}
         )
 )
 public class Favorite {
@@ -27,15 +27,9 @@ public class Favorite {
     private User user;
 
     /**
-     * 타겟 대상 (MERCHANT, CARD, PLAN)
+     * 대상 가맹점
      */
-    @Enumerated(EnumType.STRING)
-    @Column(name = "target_type", nullable = false)
-    private TargetType targetType;
-
-    /**
-     * 타겟 아이디
-     */
-    @Column(name = "target_id", nullable = false)
-    private Long targetId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merchant_id", nullable = false)
+    private Merchant merchant;
 }

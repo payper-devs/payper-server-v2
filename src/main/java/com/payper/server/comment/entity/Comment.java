@@ -8,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 @Entity
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,14 +24,14 @@ public class Comment extends BaseTimeEntity {
      * 게시글
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
     /**
      * 댓글을 단 유저
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     /**
@@ -44,4 +47,25 @@ public class Comment extends BaseTimeEntity {
     @Lob
     @Column(nullable = false)
     private String content;
+
+    /**
+     * 삭제 여부
+     */
+    @Column(name = "is_deleted", nullable = false)
+    private boolean isDeleted;
+
+    /**
+     * 삭제 시간
+     */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
+    /**
+     * 댓글 삭제
+     * soft delete
+     */
+    public void delete() {
+        this.isDeleted = true;
+        this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+    }
 }

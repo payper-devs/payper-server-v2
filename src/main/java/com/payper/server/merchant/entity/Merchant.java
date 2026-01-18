@@ -24,6 +24,6 @@ public class Merchant {
      * 카테고리
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 }
