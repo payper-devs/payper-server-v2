@@ -7,7 +7,7 @@ public class ExceptionDto {
     private final String code;
     private final String message;
 
-    public ExceptionDto(ErrorCode errorCode) {
+    private ExceptionDto(ErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMessage();
     }
