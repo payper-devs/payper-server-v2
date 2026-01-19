@@ -2,46 +2,52 @@ package com.payper.server.global.exception;
 
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;
+import com.payper.server.global.response.FieldErrorDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.List;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    //비즈니스 예외
+    // 비즈니스 예외
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiException(ApiException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.fail(errorCode));
+        return buildErrorResponse(e.getErrorCode());
     }
 
-    //잘못된 요청
+    // 잘못된 요청
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException e) {
-        ErrorCode errorCode = ErrorCode.BAD_REQUEST;
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.fail(errorCode));
+        return buildErrorResponse(ErrorCode.BAD_REQUEST);
     }
 
-    //@Valid 전용
+    // @Valid 전용
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        ErrorCode errorCode = ErrorCode.BAD_REQUEST;
+    public ResponseEntity<ApiResponse<List<FieldErrorDto>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<FieldErrorDto> fieldErrors = e.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> new FieldErrorDto
+                        (fieldError.getField(), fieldError.getDefaultMessage())).toList();
 
+        ErrorCode errorCode = ErrorCode.BAD_REQUEST;
         return ResponseEntity
                 .status(errorCode.getStatus())
-                .body(ApiResponse.fail(errorCode));
+                .body(ApiResponse.fail(errorCode, fieldErrors));
     }
 
-    //그 외 모든 예외 - 서버 오류
+    // 그 외 모든 예외 - 서버 오류
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
-        ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+        return buildErrorResponse(ErrorCode.INTERNAL_SERVER_ERROR);
+    }
+
+    // ======================
+    // 공통 응답 생성 헬퍼
+    // ======================
+    private ResponseEntity<ApiResponse<Void>> buildErrorResponse(ErrorCode errorCode) {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ApiResponse.fail(errorCode));
