@@ -4,14 +4,14 @@ import com.payper.server.global.entity.BaseTimeEntity;
 import com.payper.server.post.entity.Post;
 import com.payper.server.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Entity
+@Getter
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Comment extends BaseTimeEntity {
@@ -42,10 +42,9 @@ public class Comment extends BaseTimeEntity {
     private Comment parentComment;
 
     /**
-     * 댓글 내용
+     * 댓글 내용 (64KB, 대략 21,800자)
      */
-    @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
     /**

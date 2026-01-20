@@ -48,10 +48,9 @@ public class Post extends BaseTimeEntity {
     private String title;
 
     /**
-     * 내용
+     * 내용 (16MB, 대략 5,592,400자)
      */
-    @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "MEDIUMTEXT", nullable = false)
     private String content;
 
     /**
@@ -65,6 +64,24 @@ public class Post extends BaseTimeEntity {
      */
     @Column(name = "like_count", nullable = false)
     private long likeCount;
+
+    /**
+     * 신고 수 TODO: PostReport 테이블 고려
+     */
+    @Column(name = "report_count", nullable = false)
+    private long reportCount;
+
+    /**
+     * 비활성 여부
+     */
+    @Column(name = "is_inactive", nullable = false)
+    private boolean isInactive;
+
+    /**
+     * 비활성 시간
+     */
+    @Column(name = "inactive_at")
+    private LocalDateTime inactiveAt;
 
     /**
      * 삭제 여부
@@ -85,5 +102,13 @@ public class Post extends BaseTimeEntity {
     public void delete() {
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+    }
+
+    /**
+     * 게시글 비활성
+     */
+    public void inactivate() {
+        this.isInactive = true;
+        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 }
