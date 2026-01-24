@@ -14,7 +14,7 @@ import java.time.ZoneId;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-
+@Table(name = "posts")
 public class Post extends BaseTimeEntity {
 
     @Id
@@ -25,18 +25,18 @@ public class Post extends BaseTimeEntity {
      * 작성자 TODO: 탈퇴한 유저라면 게시글을 보여줄 때 탈퇴한 유저라고 표시해야 함
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
     /**
      * 대상 가맹점
      */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "merchant_id", nullable = false)
     private Merchant merchant;
 
     /**
-     * 게시글 타입 (BENEFIT, PROMOTION, QUESTION, ETC)
+     * 게시글 타입 (BENEFIT, QUESTION, ETC)
      */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

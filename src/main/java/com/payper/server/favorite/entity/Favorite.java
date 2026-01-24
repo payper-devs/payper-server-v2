@@ -6,8 +6,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
+        name = "favorite",
         uniqueConstraints = @UniqueConstraint(
                 name = "uk_favorite_user_merchant",
                 columnNames = {"user_id", "merchant_id"}

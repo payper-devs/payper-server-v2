@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "post_report",
         uniqueConstraints = @UniqueConstraint(
-                name = "uk_post_bookmark_post_reporter",
+                name = "uk_post_report_post_reporter",
                 columnNames = {"post_id", "reporter_id"}
         )
 )
