@@ -48,6 +48,12 @@ public class Comment extends BaseTimeEntity {
     private String content;
 
     /**
+     * 좋아요 수 TODO: CommentLike 테이블 고려
+     */
+    @Column(name = "like_count", nullable = false)
+    private long likeCount;
+
+    /**
      * 삭제 여부
      */
     @Column(name = "is_deleted", nullable = false)

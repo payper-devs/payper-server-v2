@@ -11,6 +11,7 @@ import java.time.ZoneId;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 
@@ -54,6 +55,12 @@ public class Post extends BaseTimeEntity {
     private String content;
 
     /**
+     * 댓글 수
+     */
+    @Column(name = "comment_count", nullable = false)
+    private long commentCount;
+
+    /**
      * 조회 수
      */
     @Column(name = "view_count", nullable = false)
@@ -94,6 +101,20 @@ public class Post extends BaseTimeEntity {
      */
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+
+    /**
+     * 댓글 증가
+     */
+    public void increaseCommentCount() {
+        this.commentCount++;
+    }
+
+    /**
+     * 댓글 삭제
+     */
+    public void decreaseCommentCount() {
+        this.commentCount--;
+    }
 
     /**
      * 게시글 삭제
