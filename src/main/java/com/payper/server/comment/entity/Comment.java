@@ -14,6 +14,7 @@ import java.time.ZoneId;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "comments")
 public class Comment extends BaseTimeEntity {
 
     @Id
