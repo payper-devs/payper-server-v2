@@ -44,14 +44,14 @@ public class SecurityConfig {
                 PathPatternRequestMatcher.withDefaults().basePath("/");
 
         permitAllRequestMatcher = new OrRequestMatcher(
-                //requestMatcher.matcher("/**"),//<-개발할 때는 이 내용 넣어주세요.
+                //requestMatcher.matcher("/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/swagger-ui/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/v3/api-docs/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/favicon.ico"),
                 requestMatcher.matcher("/auth/**")
         );
         authenticatedRequestMatcher = new OrRequestMatcher(
-                requestMatcher.matcher("/**"),//<-개발할 때는 이 내용 빼주세요.
+                //requestMatcher.matcher("/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/me")
         );
         adminRequestMatcher = new OrRequestMatcher(
@@ -73,8 +73,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        RequestMatcher skipEndPoints =
-                permitAllRequestMatcher;
+        RequestMatcher skipEndPoints = permitAllRequestMatcher;
         return new JwtAuthenticationFilter(
                 skipEndPoints,
                 jwtParseUtil,
