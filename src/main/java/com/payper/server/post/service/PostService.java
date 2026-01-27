@@ -1,5 +1,7 @@
 package com.payper.server.post.service;
 
+import com.payper.server.global.exception.ApiException;
+import com.payper.server.global.response.ErrorCode;
 import com.payper.server.merchant.entity.Merchant;
 import com.payper.server.merchant.repository.MerchantRepository;
 import com.payper.server.post.dto.PostRequest;
@@ -32,17 +34,11 @@ public class PostService {
     public Long createPost(Long userId, Long merchantId, PostRequest.CreatePost request) {
         // 사용자 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> {
-                    log.error("사용자 조회 실패 - userId: {}", userId);
-                    return new RuntimeException();
-                });
+                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
         // 가맹점 조회
         Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> {
-                    log.error("가맹점 조회 실패 - merchantId: {}", merchantId);
-                    return new RuntimeException();
-                });
+                .orElseThrow(() -> new ApiException(ErrorCode.MERCHANT_NOT_FOUND));
 
         // 게시글 생성
         Post post = Post.create(user, merchant, request.type(), request.title(), request.content());
@@ -59,14 +55,11 @@ public class PostService {
     public void updatePost(Long userId, Long postId, PostRequest.UpdatePost request) {
         // 게시글 조회
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> {
-                    log.error("게시글 조회 실패 - postId: {}", postId);
-                    return new RuntimeException();
-                });
+                .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 수정 권한 조회
         if(!userId.equals(post.getAuthor().getId())) {
-            throw new RuntimeException();
+            throw new ApiException(ErrorCode.NOT_POSTING_USER);
         }
 
         // 게시글 수정
@@ -82,14 +75,11 @@ public class PostService {
     public void deletePost(Long userId, Long postId) {
         // 게시글 조회
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> {
-                    log.error("게시글 조회 실패 - postId: {}", postId);
-                    return new RuntimeException();
-                });
+                .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 삭제 권한 조회
         if(!userId.equals(post.getAuthor().getId())) {
-            throw new RuntimeException();
+            throw new ApiException(ErrorCode.NOT_POSTING_USER);
         }
 
         // 게시글 삭제
@@ -107,10 +97,7 @@ public class PostService {
     public PostResponse.PostDetail getPostDetail(Long postId) {
         // 게시글 조회
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
-                .orElseThrow(() -> {
-                    log.error("게시글 조회 실패 - postId: {}", postId);
-                    return new RuntimeException();
-                });
+                .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         return PostResponse.PostDetail.from(post);
     }
