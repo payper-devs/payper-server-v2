@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByUserIdentifier(String memberIdentifier);
+    Optional<User> findByUserIdentifier(String userIdentifier);
 
     @Query("update User u set u.active = :active where u.id = :id")
     @Modifying

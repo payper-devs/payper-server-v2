@@ -104,7 +104,7 @@ class UserAndRefreshTokenJpaTest {
         em.clear();
 
         // then (repo 메서드가 Optional이 아니라 null 가능)
-        RefreshTokenEntity found = refreshTokenRepository.findByHashedRefreshToken("hashed-rt-123");
+        RefreshTokenEntity found = refreshTokenRepository.findByHashedRefreshToken("hashed-rt-123").get();
         assertThat(found).isNotNull();
         assertThat(found.getUserIdentifier()).isEqualTo(userIdentifier);
         assertThat(found.getHashedRefreshToken()).isEqualTo("hashed-rt-123");
