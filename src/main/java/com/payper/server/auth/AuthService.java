@@ -98,22 +98,15 @@ public class AuthService {
                     };
         }
 
-        // 2) DB 존재 여부 확인 (해시 조회)
-        final RefreshTokenEntity existing;
-        try {
-            existing = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
-        } catch (RuntimeException ex) {
-            // 해시 과정/인코딩 문제 등 -> "토큰 이상"으로 처리
-            log.error("refresh token not found | hashing problem");
-
-            throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
-        }
-
-        // 3) DB에 없으면 리플레이 공격 의심 -> 해당 유저 토큰 전부 폐기
-        if (existing == null) {
-            jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
-            throw new ReissueException(ErrorCode.JWT_REISSUE_OLD);
-        }
+        // 2) DB에 없으면 리플레이 공격 의심 -> 해당 유저 토큰 전부 폐기
+        Optional<RefreshTokenEntity> refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
+        refreshTokenEntity.ifPresentOrElse(
+                (r)->{},
+                ()->{
+                    jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
+                    throw new ReissueException(ErrorCode.JWT_REISSUE_OLD);
+                }
+        );
 
         upsertRefreshTokenAndEntity(userIdentifier, response, jwtParseUtil.getIssuedAt(refreshToken));
         return upsertAccessToken(userIdentifier, new Date());
