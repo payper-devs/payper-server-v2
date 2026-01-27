@@ -1,4 +1,4 @@
-package com.payper.server.auth.dto;
+package com.payper.server.auth.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

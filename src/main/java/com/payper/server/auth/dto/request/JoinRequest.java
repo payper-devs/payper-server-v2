@@ -1,10 +1,10 @@
-package com.payper.server.auth.dto;
+package com.payper.server.auth.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LoginRequest {
+public class JoinRequest {
     private String oauthToken;
 }
