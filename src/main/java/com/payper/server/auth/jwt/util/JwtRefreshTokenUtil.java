@@ -20,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -72,12 +73,9 @@ public class JwtRefreshTokenUtil {
         return count;
     }
 
-    public RefreshTokenEntity getRefreshTokenEntity(String refreshToken) {
+    public Optional<RefreshTokenEntity> getRefreshTokenEntity(String refreshToken) {
         return refreshTokenRepository
-                .findByHashedRefreshToken(hashRefreshToken(refreshToken))
-                .orElseThrow(
-                        ()-> new IllegalStateException("Failed to find refresh token")
-                );
+                .findByHashedRefreshToken(hashRefreshToken(refreshToken));
     }
 
 

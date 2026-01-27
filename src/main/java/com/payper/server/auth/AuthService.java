@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -90,11 +91,11 @@ public class AuthService {
             userIdentifier = jwtParseUtil.getUserIdentifier(refreshToken);
         } catch (JwtValidAuthenticationException e) {
             throw
-            switch (e.getErrorCode()) {
-                case JWT_ERROR -> new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
-                case JWT_EXPIRED -> new ReissueException(ErrorCode.JWT_REISSUE_EXPIRED);
-                default -> new ReissueException(ErrorCode.REISSUE_ERROR);
-            };
+                    switch (e.getErrorCode()) {
+                        case JWT_ERROR -> new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+                        case JWT_EXPIRED -> new ReissueException(ErrorCode.JWT_REISSUE_EXPIRED);
+                        default -> new ReissueException(ErrorCode.REISSUE_ERROR);
+                    };
         }
 
         // 2) DB 존재 여부 확인 (해시 조회)
@@ -141,11 +142,10 @@ public class AuthService {
             return;
         }
 
-        try {
-            RefreshTokenEntity refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
-            jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(refreshTokenEntity.getUserIdentifier());
-        } catch (Exception e) {
-            log.info("refreshToken invalid");
-        }
+        Optional<RefreshTokenEntity> refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
+        refreshTokenEntity.ifPresent(
+                r->
+                        jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(r.getUserIdentifier())
+        );
     }
 }
