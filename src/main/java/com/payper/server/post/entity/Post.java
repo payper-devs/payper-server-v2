@@ -137,6 +137,9 @@ public class Post extends BaseTimeEntity {
         this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
+    /**
+     * 게시글 생성
+     */
     public static Post create(User author, Merchant merchant, PostType type, String title, String content) {
         return Post.builder()
                 .author(author)
@@ -147,8 +150,18 @@ public class Post extends BaseTimeEntity {
                 .build();
     }
 
+    /**
+     * 게시글 수정
+     */
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    /**
+     * 댓글을 달 수 있는 게시글인지 체크
+     */
+    public boolean isCommentable() {
+        return !this.isDeleted && !this.isInactive;
     }
 }

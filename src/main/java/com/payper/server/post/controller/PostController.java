@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,7 +37,7 @@ public class PostController {
             @RequestBody @Valid PostRequest.CreatePost request
     ) {
         Long postId = postService.createPost(1L, merchantId, request);
-        return ResponseEntity.status(201).body(ApiResponse.created(postId));
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(postId));
     }
 
     /**
