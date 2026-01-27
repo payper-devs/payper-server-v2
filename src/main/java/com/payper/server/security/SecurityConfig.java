@@ -31,6 +31,7 @@ public class SecurityConfig {
                 PathPatternRequestMatcher.withDefaults().basePath("/");
 
         permitAllRequestMatcher = new OrRequestMatcher(
+                //requestMatcher.matcher("/**"),//<-테스트할 때는 이 내용 넣어주세요.
                 requestMatcher.matcher(HttpMethod.GET, "/swagger-ui/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/v3/api-docs/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/favicon.ico"),
