@@ -81,7 +81,7 @@ public class JwtRefreshTokenUtil {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        int age = (int) ((new Date()).getTime() - jwtParseUtil.getExpiresAt(refreshToken).getTime() / 1000);
+        int age = (int) ((jwtParseUtil.getExpiresAt(refreshToken).getTime() - new Date().getTime()) / 1000);
         cookie.setMaxAge(age);
         response.addCookie(cookie);
     }

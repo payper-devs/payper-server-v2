@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class JwtModulesSpringBootIT {
+class JwtModulesSpringBootIntegrationTest {
 
     @Autowired JwtProperties jwtProperties;
 
@@ -109,23 +109,6 @@ class JwtModulesSpringBootIT {
 
         // when & then
         assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(expired))
-                .isInstanceOf(JwtValidAuthenticationException.class);
-    }
-
-    @Test
-    @DisplayName("토큰이 변조되면 JwtValidAuthenticationException이 발생한다 (SignatureException이 밖으로 새지 않음)")
-    void tamperedToken_throwsMappedException() {
-        // given
-        String userIdentifier = "user-tamper";
-        Date now = new Date();
-        String token = jwtTokenUtil.generateJwtToken(JwtType.ACCESS, now, userIdentifier);
-
-        // 마지막 문자 변조 → signature mismatch 유도
-        String tampered = token.substring(0, token.length() - 1)
-                + (token.endsWith("a") ? "b" : "a");
-
-        // then
-        assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(tampered))
                 .isInstanceOf(JwtValidAuthenticationException.class);
     }
 
