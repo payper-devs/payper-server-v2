@@ -1,5 +1,6 @@
 package com.payper.server.post.controller;
 
+import com.payper.server.global.response.ApiResponse;
 import com.payper.server.post.dto.PostRequest;
 import com.payper.server.post.dto.PostResponse;
 import com.payper.server.post.dto.PostSortType;
@@ -29,13 +30,13 @@ public class PostController {
      * 가입된 사용자만 글을 작성할 수 있음
      */
     @PostMapping("/merchants/{merchantId}") // TODO: 흠 RESTFUL한 URL은 아닌 것 같음, posts가 뒤로 가는 게 맞는 것 같음
-    public ResponseEntity<Long> createPost(
+    public ResponseEntity<ApiResponse<Long>> createPost(
             // TODO @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long merchantId,
             @RequestBody @Valid PostRequest.CreatePost request
     ) {
         Long postId = postService.createPost(1L, merchantId, request);
-        return ResponseEntity.status(201).body(postId);
+        return ResponseEntity.status(201).body(ApiResponse.created(postId));
     }
 
     /**
@@ -43,13 +44,13 @@ public class PostController {
      * 작성자만 수정 가능
      */
     @PutMapping("/{postId}")
-    public ResponseEntity<Void> updatePost(
+    public ResponseEntity<ApiResponse<Void>> updatePost(
             // TODO @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId,
             @RequestBody @Valid PostRequest.UpdatePost request
     ) {
         postService.updatePost(1L, postId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     /**
@@ -58,12 +59,12 @@ public class PostController {
      * TODO 댓글도 같이 soft delete
      */
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(
+    public ResponseEntity<ApiResponse<Void>> deletePost(
             // TODO @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId
     ) {
         postService.deletePost(1L, postId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok());
     }
 
     /**
@@ -72,9 +73,9 @@ public class PostController {
      * 삭제되지 않은 글만 조회함
      */
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse.PostDetail> getPostDetail(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponse<PostResponse.PostDetail>> getPostDetail(@PathVariable Long postId) {
         PostResponse.PostDetail response = postService.getPostDetail(postId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
     /**
@@ -89,7 +90,7 @@ public class PostController {
      * 페이지네이션
      */
     @GetMapping()
-    public ResponseEntity<Page<PostResponse.PostList>> getPosts(
+    public ResponseEntity<ApiResponse<Page<PostResponse.PostList>>> getPosts(
             @RequestParam(required = false) Long merchantId,
             @RequestParam(required = false) PostType type,
             @RequestParam(defaultValue = "POSTING_DATE") PostSortType sort,
@@ -99,6 +100,6 @@ public class PostController {
     ) {
         Pageable pageable = PageRequest.of(page, size, sort.toSort(direction));
         Page<PostResponse.PostList> response = postService.getPosts(merchantId, type, pageable);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }
