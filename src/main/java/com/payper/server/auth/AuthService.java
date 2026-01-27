@@ -4,6 +4,8 @@ import com.payper.server.auth.dto.JoinRequest;
 import com.payper.server.auth.exception.OAuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
+import com.payper.server.auth.jwt.exception.JwtValidAuthenticationException;
+import com.payper.server.auth.jwt.exception.ReissueException;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.auth.jwt.util.JwtRefreshTokenUtil;
 import com.payper.server.auth.jwt.util.JwtTokenUtil;
@@ -18,6 +20,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 
@@ -47,7 +50,7 @@ public class AuthService {
     }
 
     public String enrollNewAuthTokens(User user, HttpServletResponse response) {
-        return upsertNewAuthTokens(user.getUserIdentifier(),response,new Date());
+        return upsertNewAuthTokens(user.getUserIdentifier(), response, new Date());
     }
 
     public User findUserWithOauthToken(String oauthToken, AuthType authType) {
@@ -58,6 +61,54 @@ public class AuthService {
         };
 
         return userService.getActiveOAuthUser(oauthUserInfo);
+    }
+
+    public String reissueAccessToken(String refreshToken, HttpServletResponse response) {
+        /* 1. 있는데, 만료되지 않음 -> 정상처리
+         * 2. 있는데, 만료됨 -> 정상 리프레시 만료
+         * 3. 없는데, 만료되지 않음 -> 리플레이 어택
+         * 4. 없는데, 만료됨 -> 리플레이 어택
+         * 5. 그냥 토큰이 이상함
+         * */
+
+        if (!StringUtils.hasText(refreshToken)) {
+            throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+        }
+
+        // 1) JWT 자체 검증(서명/만료/형식) + 타입 검사
+        final String userIdentifier;
+        final JwtType jwtType;
+        try {
+            jwtType = jwtParseUtil.getJwtType(refreshToken);
+            if (jwtType != JwtType.REFRESH) {
+                throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+            }
+            userIdentifier = jwtParseUtil.getUserIdentifier(refreshToken);
+        } catch (JwtValidAuthenticationException e) {
+            throw
+            switch (e.getErrorCode()) {
+                case JWT_ERROR -> new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+                case JWT_EXPIRED -> new ReissueException(ErrorCode.JWT_REISSUE_EXPIRED);
+                default -> new ReissueException(ErrorCode.REISSUE_ERROR);
+            };
+        }
+
+        // 2) DB 존재 여부 확인 (해시 조회)
+        final RefreshTokenEntity existing;
+        try {
+            existing = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
+        } catch (RuntimeException ex) {
+            // 해시 과정/인코딩 문제 등 -> "토큰 이상"으로 처리
+            throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+        }
+
+        // 3) DB에 없으면 리플레이 공격 의심 -> 해당 유저 토큰 전부 폐기
+        if (existing == null) {
+            jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
+            throw new ReissueException(ErrorCode.JWT_REISSUE_OLD);
+        }
+
+        return upsertNewAuthTokens(userIdentifier, response, jwtParseUtil.getIssuedAt(refreshToken));
     }
 
     private String upsertNewAuthTokens(String userIdentifier, HttpServletResponse response, Date issuedAt) {
@@ -75,5 +126,17 @@ public class AuthService {
         return accessToken;
     }
 
+    public void clearRefreshTokenAndEntity(String refreshToken, HttpServletResponse response) {
+        jwtRefreshTokenUtil.eraseCookieRefreshToken(response);
 
+        if (!StringUtils.hasText(refreshToken)) {
+            return;
+        }
+
+        try {
+            RefreshTokenEntity refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
+            jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(refreshTokenEntity.getUserIdentifier());
+        } catch (Exception e) {//무시}
+        }
+    }
 }
