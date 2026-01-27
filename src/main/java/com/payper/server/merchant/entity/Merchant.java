@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Merchant {
+public class Merchant { // TODO 가맹점이 삭제되면 해당 가맹점에 등록된 post는??
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

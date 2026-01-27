@@ -121,8 +121,12 @@ public class Post extends BaseTimeEntity {
      * soft delete
      */
     public void delete() {
+        if (this.isDeleted) { // 멱등성 고려 처리
+            return;
+        }
+
         this.isDeleted = true;
-        this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.deletedAt = LocalDateTime.now();
     }
 
     /**
@@ -131,5 +135,20 @@ public class Post extends BaseTimeEntity {
     public void inactivate() {
         this.isInactive = true;
         this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+    }
+
+    public static Post create(User author, Merchant merchant, PostType type, String title, String content) {
+        return Post.builder()
+                .author(author)
+                .merchant(merchant)
+                .type(type)
+                .title(title)
+                .content(content)
+                .build();
+    }
+
+    public void update(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }
