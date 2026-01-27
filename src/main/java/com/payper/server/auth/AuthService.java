@@ -52,7 +52,9 @@ public class AuthService {
     }
 
     public String enrollNewAuthTokens(User user, HttpServletResponse response) {
-        return upsertNewAuthTokens(user.getUserIdentifier(), response, new Date());
+        Date issuedAt = new Date();
+        upsertRefreshTokenAndEntity(user.getUserIdentifier(), response, issuedAt);
+        return upsertAccessToken(user.getUserIdentifier(), issuedAt);
     }
 
     public User findUserWithOauthToken(String oauthToken, AuthType authType) {
@@ -112,11 +114,15 @@ public class AuthService {
             throw new ReissueException(ErrorCode.JWT_REISSUE_OLD);
         }
 
-        return upsertNewAuthTokens(userIdentifier, response, jwtParseUtil.getIssuedAt(refreshToken));
+        upsertRefreshTokenAndEntity(userIdentifier, response, jwtParseUtil.getIssuedAt(refreshToken));
+        return upsertAccessToken(userIdentifier, new Date());
     }
 
-    private String upsertNewAuthTokens(String userIdentifier, HttpServletResponse response, Date issuedAt) {
-        String accessToken = jwtTokenUtil.generateJwtToken(JwtType.ACCESS, issuedAt, userIdentifier);
+    private String upsertAccessToken(String userIdentifier, Date issuedAt) {
+        return jwtTokenUtil.generateJwtToken(JwtType.ACCESS, issuedAt, userIdentifier);
+    }
+
+    private void upsertRefreshTokenAndEntity(String userIdentifier, HttpServletResponse response, Date issuedAt) {
         String refreshToken = jwtTokenUtil.generateJwtToken(JwtType.REFRESH, issuedAt, userIdentifier);
 
         RefreshTokenEntity refreshTokenEntity =
@@ -126,8 +132,6 @@ public class AuthService {
         jwtRefreshTokenUtil.generateCookieRefreshToken(refreshToken, response);
 
         jwtRefreshTokenUtil.upsertRefreshTokenEntity(refreshTokenEntity);
-
-        return accessToken;
     }
 
     public void clearRefreshTokenAndEntity(String refreshToken, HttpServletResponse response) {
