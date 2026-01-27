@@ -104,7 +104,7 @@ public class PostService {
      * 게시글 단일 조회
      */
     @Transactional(readOnly = true)
-    public PostResponse.postDetail getPostDetail(Long postId) {
+    public PostResponse.PostDetail getPostDetail(Long postId) {
         // 게시글 조회
         Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> {
@@ -112,17 +112,17 @@ public class PostService {
                     return new RuntimeException();
                 });
 
-        return PostResponse.postDetail.from(post);
+        return PostResponse.PostDetail.from(post);
     }
 
     /**
      * 게시글 리스트 조회
      */
     @Transactional(readOnly = true)
-    public Page<PostResponse.postList> getPosts(Long merchantId, PostType type, Pageable pageable) {
+    public Page<PostResponse.PostList> getPosts(Long merchantId, PostType type, Pageable pageable) {
         Page<Post> posts = postRepository.findActivePostsByCondition(merchantId, type, pageable);
 
         log.info("post 조회 완료 {}", posts);
-        return posts.map(PostResponse.postList::from);
+        return posts.map(PostResponse.PostList::from);
     }
 }

@@ -63,7 +63,7 @@ public class PostController {
             @PathVariable Long postId
     ) {
         postService.deletePost(1L, postId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -72,8 +72,8 @@ public class PostController {
      * 삭제되지 않은 글만 조회함
      */
     @GetMapping("/{postId}")
-    public ResponseEntity<PostResponse.postDetail> getPostDetail(@PathVariable Long postId) {
-        PostResponse.postDetail response = postService.getPostDetail(postId);
+    public ResponseEntity<PostResponse.PostDetail> getPostDetail(@PathVariable Long postId) {
+        PostResponse.PostDetail response = postService.getPostDetail(postId);
         return ResponseEntity.ok(response);
     }
 
@@ -89,7 +89,7 @@ public class PostController {
      * 페이지네이션
      */
     @GetMapping()
-    public ResponseEntity<Page<PostResponse.postList>> getPosts(
+    public ResponseEntity<Page<PostResponse.PostList>> getPosts(
             @RequestParam(required = false) Long merchantId,
             @RequestParam(required = false) PostType type,
             @RequestParam(defaultValue = "POSTING_DATE") PostSortType sort,
@@ -98,7 +98,7 @@ public class PostController {
             @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size, sort.toSort(direction));
-        Page<PostResponse.postList> response = postService.getPosts(merchantId, type, pageable);
+        Page<PostResponse.PostList> response = postService.getPosts(merchantId, type, pageable);
         return ResponseEntity.ok(response);
     }
 }

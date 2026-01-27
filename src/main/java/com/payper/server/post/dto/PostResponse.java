@@ -10,7 +10,7 @@ public class PostResponse {
     /**
      * 게시글 단일 조회 DTO
      */
-    public record postDetail(
+    public record PostDetail(
             Long id,
             String authorName, /* 작성자 이름 */
             String merchantName, /* 가맹점명 */
@@ -23,8 +23,8 @@ public class PostResponse {
             LocalDateTime createdAt, /* 글 작성 시간 */
             LocalDateTime updatedAt /* 글 수정 시간 */
     ) {
-        public static postDetail from(Post post) {
-            return new postDetail(
+        public static PostDetail from(Post post) {
+            return new PostDetail(
                     post.getId(),
                     post.getAuthor().getName(),
                     post.getMerchant().getName(),
@@ -43,7 +43,7 @@ public class PostResponse {
     /**
      * 게시글 리스트 조회 DTO
      */
-    public record postList(
+    public record PostList(
             Long id,
             String authorName, /* 작성자 이름 */
             String merchantName, /* 가맹점명 */
@@ -55,8 +55,8 @@ public class PostResponse {
             LocalDateTime createdAt /* 글 작성 시간 */
 
     ) {
-        public static postList from(Post post) {
-            return new postList(
+        public static PostList from(Post post) {
+            return new PostList(
                     post.getId(),
                     post.getAuthor().getName(),
                     post.getMerchant().getName(),
