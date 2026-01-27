@@ -28,7 +28,7 @@ public class JwtTokenUtil {
         );
     }
 
-    public String generateJwtToken(JwtType jwtType, Date now, String memberIdentifier) {
+    public String generateJwtToken(JwtType jwtType, Date now, String userIdentifier) {
         Date expDate = new Date(
                 now.getTime() +
                         (jwtType == JwtType.REFRESH ?
@@ -39,7 +39,7 @@ public class JwtTokenUtil {
                 .header()
                 .type(jwtType.name())
                 .and()
-                .subject(memberIdentifier)
+                .subject(userIdentifier)
                 .issuedAt(now)
                 .expiration(expDate)
                 .signWith(key)

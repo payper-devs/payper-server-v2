@@ -4,6 +4,7 @@ import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.exception.JwtValidAuthenticationException;
 import com.payper.server.global.response.ErrorCode;
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -76,7 +77,7 @@ public class JwtParseUtil {
                     .parseSignedClaims(jwtToken);
         } catch (ExpiredJwtException e) {
             throw new JwtValidAuthenticationException(ErrorCode.JWT_EXPIRED);
-        } catch (UnsupportedJwtException | ClaimJwtException |
+        } catch (UnsupportedJwtException | ClaimJwtException | SignatureException |
                  MalformedJwtException | IllegalArgumentException e) {
             throw new JwtValidAuthenticationException(ErrorCode.JWT_ERROR);
         }

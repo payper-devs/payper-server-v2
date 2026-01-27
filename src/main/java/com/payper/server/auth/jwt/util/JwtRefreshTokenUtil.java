@@ -38,11 +38,11 @@ public class JwtRefreshTokenUtil {
     }
 
     public RefreshTokenEntity generateRefreshTokenEntity(
-            String memberIdentifier, String refreshToken
+            String userIdentifier, String refreshToken
     ) {
 
         return RefreshTokenEntity.create(
-                memberIdentifier,
+                userIdentifier,
                 hashRefreshToken(refreshToken)
         );
     }
@@ -64,8 +64,8 @@ public class JwtRefreshTokenUtil {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int deleteAllRefreshTokenEntity(String memberIdentifier) {
-        int count = refreshTokenRepository.deleteByUserIdentifier(memberIdentifier);
+    public int deleteAllRefreshTokenEntity(String userIdentifier) {
+        int count = refreshTokenRepository.deleteByUserIdentifier(userIdentifier);
         refreshTokenRepository.flush();
         return count;
     }
