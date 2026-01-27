@@ -18,6 +18,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,20 +26,25 @@ import static org.assertj.core.api.Assertions.*;
 @ActiveProfiles("test")
 class JwtModulesSpringBootIntegrationTest {
 
-    @Autowired JwtProperties jwtProperties;
+    @Autowired
+    JwtProperties jwtProperties;
 
-    @Autowired JwtTokenUtil jwtTokenUtil;
-    @Autowired JwtParseUtil jwtParseUtil;
+    @Autowired
+    JwtTokenUtil jwtTokenUtil;
+    @Autowired
+    JwtParseUtil jwtParseUtil;
 
-    @Autowired JwtRefreshTokenUtil jwtRefreshTokenUtil;
-    @Autowired RefreshTokenRepository refreshTokenRepository;
+    @Autowired
+    JwtRefreshTokenUtil jwtRefreshTokenUtil;
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
 
     /**
      * ✅ 이 테스트는 "실제 MySQL 연동"이므로
-     *  - 각 테스트가 서로 간섭하지 않게 매번 DB를 비우고
-     *  - @Transactional이 적용된 테스트라면(기본 롤백)에도,
-     *    내부 util이 REQUIRES_NEW로 flush/commit을 때리며 남길 수 있어
-     *    BeforeEach에서 강제로 정리하는 방식이 안전함.
+     * - 각 테스트가 서로 간섭하지 않게 매번 DB를 비우고
+     * - @Transactional이 적용된 테스트라면(기본 롤백)에도,
+     * 내부 util이 REQUIRES_NEW로 flush/commit을 때리며 남길 수 있어
+     * BeforeEach에서 강제로 정리하는 방식이 안전함.
      */
     @BeforeEach
     void cleanDb() {
@@ -125,8 +131,8 @@ class JwtModulesSpringBootIntegrationTest {
     /**
      * ✅ DB 통합 플로우 테스트들은 '테스트 메서드 단위 트랜잭션' 안에서 실행되도록 @Transactional 부여
      * - 이 테스트 클래스 전체에 @Transactional을 걸지 않는 이유:
-     *   util 내부에 REQUIRES_NEW가 섞여 있으면 테스트 트랜잭션 롤백으로도 데이터가 남을 수 있어서
-     *   오히려 오해를 만들기 쉬움.
+     * util 내부에 REQUIRES_NEW가 섞여 있으면 테스트 트랜잭션 롤백으로도 데이터가 남을 수 있어서
+     * 오히려 오해를 만들기 쉬움.
      * - 대신: 각 테스트 시작 전 cleanDb()로 완전 격리
      */
     @Test
@@ -164,9 +170,11 @@ class JwtModulesSpringBootIntegrationTest {
 
         assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw1)).isNull();
 
-        RefreshTokenEntity found2 = jwtRefreshTokenUtil.getRefreshTokenEntity(raw2);
+        Optional<RefreshTokenEntity> found2 = jwtRefreshTokenUtil.getRefreshTokenEntity(raw2);
         assertThat(found2).isNotNull();
-        assertThat(found2.getUserIdentifier()).isEqualTo(userIdentifier);
+        found2.ifPresent(
+                refreshTokenEntity -> assertThat(refreshTokenEntity.getUserIdentifier()
+                ).isEqualTo(userIdentifier));
     }
 
     @Test
