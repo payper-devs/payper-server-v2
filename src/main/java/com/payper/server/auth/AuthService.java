@@ -18,6 +18,7 @@ import com.payper.server.user.entity.User;
 import com.payper.server.user.entity.UserRole;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -27,6 +28,7 @@ import java.util.Date;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final UserService userService;
     private final KakaoOAuthUtilImpl kakaoOAuthUtil;
@@ -99,6 +101,8 @@ public class AuthService {
             existing = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
         } catch (RuntimeException ex) {
             // 해시 과정/인코딩 문제 등 -> "토큰 이상"으로 처리
+            log.error("refresh token not found | hashing problem");
+
             throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
         }
 
@@ -136,7 +140,8 @@ public class AuthService {
         try {
             RefreshTokenEntity refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
             jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(refreshTokenEntity.getUserIdentifier());
-        } catch (Exception e) {//무시}
+        } catch (Exception e) {
+            log.info("refreshToken invalid");
         }
     }
 }
