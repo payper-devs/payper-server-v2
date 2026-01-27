@@ -25,7 +25,8 @@ public class UserService {
     private void validateDuplicate(final User user) {
         Optional<User> findUser = switch (user.getAuthType()) {
             case KAKAO -> userRepository.findByOauthIdAndActive(user.getOauthId(), true);
-            default -> Optional.empty();
+            default ->
+                    throw new IllegalArgumentException("Unsupported AuthType for duplicate validation: " + user.getAuthType());
         };
 
         if (findUser.isPresent()) {
@@ -42,7 +43,7 @@ public class UserService {
                         .orElseThrow(() -> new UserAuthenticationException(ErrorCode.USER_NOTFOUND));
 
         if (!user.isActive()) {
-            throw new UserAuthenticationException(ErrorCode.USER_NOTFOUND);
+            throw new UserAuthenticationException(ErrorCode.USER_INACTIVE);
         }
         return user;
     }

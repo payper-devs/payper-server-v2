@@ -26,6 +26,8 @@ public enum ErrorCode {
     UNAUTHORIZED("SEC-002", HttpStatus.FORBIDDEN, "Unauthorized"),
     USER_DUPLICATE("SEC-003", HttpStatus.INTERNAL_SERVER_ERROR, "Duplicate User"),
     USER_NOTFOUND("SEC-004", HttpStatus.INTERNAL_SERVER_ERROR, "User Not Exists"),
+    USER_INACTIVE("SEC-005", HttpStatus.INTERNAL_SERVER_ERROR, "User Inactive"),
+
     OAUTH_RESOURCE_ERROR("OAUTH-001", HttpStatus.SERVICE_UNAVAILABLE, "OAuth Resource Unavailable");
 
 

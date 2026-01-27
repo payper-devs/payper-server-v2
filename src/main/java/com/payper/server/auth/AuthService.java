@@ -54,12 +54,8 @@ public class AuthService {
 
         OAuthUserInfo oauthUserInfo = switch (authType) {
             case AuthType.KAKAO -> kakaoOAuthUtil.getUserInfoFromOAuthToken(oauthToken);
-            default -> null;
+            default -> throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
         };
-
-        if (oauthUserInfo == null) {
-            throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
-        }
 
         return userService.getActiveOAuthUser(oauthUserInfo);
     }

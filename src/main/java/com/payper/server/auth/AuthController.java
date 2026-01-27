@@ -27,12 +27,8 @@ public class AuthController {
     ) {
         User user = authService.join(joinRequest);
 
-        String accessToken =
-                authService.enrollNewAuthTokens(user, response);
 
-        return ResponseEntity.ok(
-                ApiResponse.ok(new LoginSuccessResponse(accessToken))
-        );
+        return issueTokensAndCreateResponse(user, response);
     }
 
 
@@ -46,11 +42,12 @@ public class AuthController {
                 AuthType.KAKAO
         );
 
-        String accessToken =
-                authService.enrollNewAuthTokens(user, response);
 
-        return ResponseEntity.ok(
-                ApiResponse.ok(new LoginSuccessResponse(accessToken))
-        );
+        return issueTokensAndCreateResponse(user, response);
+    }
+
+    private ResponseEntity<ApiResponse<LoginSuccessResponse>> issueTokensAndCreateResponse(User user, HttpServletResponse response) {
+        String accessToken = authService.enrollNewAuthTokens(user, response);
+        return ResponseEntity.ok(ApiResponse.ok(new LoginSuccessResponse(accessToken)));
     }
 }
