@@ -1,6 +1,5 @@
 package com.payper.server.post.service;
 
-import com.payper.server.comment.repository.CommentRepository;
 import com.payper.server.merchant.entity.Merchant;
 import com.payper.server.merchant.repository.MerchantRepository;
 import com.payper.server.post.dto.PostRequest;
@@ -25,8 +24,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final MerchantRepository merchantRepository;
-    private final CommentRepository commentRepository;
-    
+
     /**
      * 게시글 작성
      */
