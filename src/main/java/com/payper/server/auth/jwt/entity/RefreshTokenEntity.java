@@ -1,4 +1,4 @@
-package com.payper.server.auth.jwt;
+package com.payper.server.auth.jwt.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

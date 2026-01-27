@@ -16,3 +16,11 @@ spring:
   sql:
     init:
       mode: never
+
+jwt:
+  secret-key: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCD"
+  refresh-token:
+    secret-key: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCD"
+    exptime: 1d
+  access-token:
+    exptime: 8h
