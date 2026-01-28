@@ -3,16 +3,14 @@ package com.payper.server.auth;
 import com.payper.server.auth.dto.JoinRequest;
 import com.payper.server.auth.dto.LoginRequest;
 import com.payper.server.auth.dto.LoginSuccessResponse;
+import com.payper.server.auth.dto.ReissueSuccessResponse;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -46,8 +44,31 @@ public class AuthController {
         return issueTokensAndCreateResponse(user, response);
     }
 
-    private ResponseEntity<ApiResponse<LoginSuccessResponse>> issueTokensAndCreateResponse(User user, HttpServletResponse response) {
+    private ResponseEntity<ApiResponse<LoginSuccessResponse>>
+    issueTokensAndCreateResponse(User user, HttpServletResponse response) {
         String accessToken = authService.enrollNewAuthTokens(user, response);
         return ResponseEntity.ok(ApiResponse.ok(new LoginSuccessResponse(accessToken)));
+    }
+
+    @PostMapping("/reissue")
+    public ResponseEntity<ApiResponse<ReissueSuccessResponse>> reissue(
+            @CookieValue(required = false) String refreshToken,
+            HttpServletResponse response
+    ){
+        String accessToken = authService.reissueAccessToken(refreshToken, response);
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(new ReissueSuccessResponse(accessToken))
+        );
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(
+            @CookieValue(required = false) String refreshToken,
+            HttpServletResponse response
+    ) {
+        authService.clearRefreshTokenAndEntity(refreshToken, response);
+
+        return ResponseEntity.ok(ApiResponse.ok("logout success"));
     }
 }
