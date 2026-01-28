@@ -33,39 +33,40 @@ import java.util.Optional;
 public class AuthService {
     private final UserService userService;
     private final KakaoOAuthUtilImpl kakaoOAuthUtil;
+
     private final JwtTokenUtil jwtTokenUtil;
     private final JwtRefreshTokenUtil jwtRefreshTokenUtil;
     private final JwtParseUtil jwtParseUtil;
 
-    public User join(JoinRequest joinRequest) {
-        String oauthToken = joinRequest.getOauthToken();
-        OAuthUserInfo oauthUserInfo = kakaoOAuthUtil.getUserInfoFromOAuthToken(oauthToken);
+    public User findOrEnrollOAuthUser(OAuthUserInfo oauthUserInfo) {
+        //먼저 검증
+        Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
 
-        User user = User.create(
-                AuthType.KAKAO,
-                oauthUserInfo.getName(),
-                oauthUserInfo.getOauthId(),
-                UserRole.USER,
-                true
+        return user.orElseGet(
+                () -> userService.save(
+                        User.create(
+                                AuthType.KAKAO,
+                                oauthUserInfo.getName(),
+                                oauthUserInfo.getOauthId(),
+                                UserRole.USER,
+                                true
+                        )
+                )
         );
-
-        return userService.save(user);
     }
+
+    public OAuthUserInfo findOAuthUserInfo(String oauthToken, AuthType authType) {
+        return switch (authType) {
+            case AuthType.KAKAO -> kakaoOAuthUtil.getUserInfoFromOAuthToken(oauthToken);
+            default -> throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
+        };
+    }
+
 
     public String enrollNewAuthTokens(User user, HttpServletResponse response) {
         Date issuedAt = new Date();
         upsertRefreshTokenAndEntity(user.getUserIdentifier(), response, issuedAt);
         return upsertAccessToken(user.getUserIdentifier(), issuedAt);
-    }
-
-    public User findUserWithOauthToken(String oauthToken, AuthType authType) {
-
-        OAuthUserInfo oauthUserInfo = switch (authType) {
-            case AuthType.KAKAO -> kakaoOAuthUtil.getUserInfoFromOAuthToken(oauthToken);
-            default -> throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
-        };
-
-        return userService.getActiveOAuthUser(oauthUserInfo);
     }
 
     public String reissueAccessToken(String refreshToken, HttpServletResponse response) {
@@ -101,8 +102,9 @@ public class AuthService {
         // 2) DB에 없으면 리플레이 공격 의심 -> 해당 유저 토큰 전부 폐기
         Optional<RefreshTokenEntity> refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
         refreshTokenEntity.ifPresentOrElse(
-                (r)->{},
-                ()->{
+                (r) -> {
+                },
+                () -> {
                     jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
                     throw new ReissueException(ErrorCode.JWT_REISSUE_OLD);
                 }
@@ -137,7 +139,7 @@ public class AuthService {
 
         Optional<RefreshTokenEntity> refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
         refreshTokenEntity.ifPresent(
-                r->
+                r ->
                         jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(r.getUserIdentifier())
         );
     }

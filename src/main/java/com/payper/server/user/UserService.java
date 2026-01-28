@@ -17,8 +17,6 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User save(final User user) {
-        validateDuplicate(user);
-
         return userRepository.save(user);
     }
 
@@ -34,17 +32,21 @@ public class UserService {
         }
     }
 
-    public User getActiveOAuthUser(OAuthUserInfo oAuthUserInfo) {
-        User user =
+    public Optional<User> getActiveOAuthUser(OAuthUserInfo oAuthUserInfo) {
+        Optional<User> user =
                 userRepository.findByOauthIdAndAuthType(
-                                oAuthUserInfo.getOauthId(),
-                                oAuthUserInfo.getAuthType()
-                        )
-                        .orElseThrow(() -> new UserAuthenticationException(ErrorCode.USER_NOTFOUND));
+                        oAuthUserInfo.getOauthId(),
+                        oAuthUserInfo.getAuthType()
+                );
 
-        if (!user.isActive()) {
-            throw new UserAuthenticationException(ErrorCode.USER_INACTIVE);
-        }
+        user.ifPresent(
+                u -> {
+                    if (!u.isActive()) {
+                        throw new UserAuthenticationException(ErrorCode.USER_INACTIVE);
+                    }
+                }
+        );
+
         return user;
     }
 

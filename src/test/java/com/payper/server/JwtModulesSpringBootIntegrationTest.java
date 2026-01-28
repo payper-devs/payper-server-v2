@@ -161,14 +161,14 @@ class JwtModulesSpringBootIntegrationTest {
         RefreshTokenEntity e1 = jwtRefreshTokenUtil.generateRefreshTokenEntity(userIdentifier, raw1);
         jwtRefreshTokenUtil.upsertRefreshTokenEntity(e1);
 
-        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw1)).isNotNull();
+        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw1)).isNotEmpty();
 
         // 2) 두 번째 토큰 업서트 → 첫 토큰은 제거되어야 함
         String raw2 = jwtTokenUtil.generateJwtToken(JwtType.REFRESH, new Date(), userIdentifier);
         RefreshTokenEntity e2 = jwtRefreshTokenUtil.generateRefreshTokenEntity(userIdentifier, raw2);
         jwtRefreshTokenUtil.upsertRefreshTokenEntity(e2);
 
-        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw1)).isNull();
+        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw1)).isEmpty();
 
         Optional<RefreshTokenEntity> found2 = jwtRefreshTokenUtil.getRefreshTokenEntity(raw2);
         assertThat(found2).isNotNull();
@@ -187,11 +187,11 @@ class JwtModulesSpringBootIntegrationTest {
         RefreshTokenEntity e = jwtRefreshTokenUtil.generateRefreshTokenEntity(userIdentifier, raw);
         refreshTokenRepository.saveAndFlush(e);
 
-        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw)).isNotNull();
+        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw)).isNotEmpty();
 
         int deleted = jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
 
         assertThat(deleted).isGreaterThanOrEqualTo(1);
-        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw)).isNull();
+        assertThat(jwtRefreshTokenUtil.getRefreshTokenEntity(raw)).isEmpty();
     }
 }
