@@ -19,13 +19,16 @@ public enum ErrorCode {
     JWT_EXPIRED("JWT_002", HttpStatus.UNAUTHORIZED, "JWT Expired"),
     JWT_REISSUE_ERROR("JWT_003", HttpStatus.INTERNAL_SERVER_ERROR, "Refresh Token General Error"),
     JWT_REISSUE_EXPIRED("JWT_004", HttpStatus.INTERNAL_SERVER_ERROR, "Refresh Token Expired"),
-    REISSUE_ERROR("JWT_005", HttpStatus.INTERNAL_SERVER_ERROR, "Reissue General Error"),
+    JWT_REISSUE_OLD("JWT_005", HttpStatus.INTERNAL_SERVER_ERROR, "Refresh Token Is Old"),
+    REISSUE_ERROR("JWT_006", HttpStatus.INTERNAL_SERVER_ERROR, "Reissue General Error"),
 
     //AUTHENTICATION - GENERAL
     UNAUTHENTICATED("SEC-001", HttpStatus.UNAUTHORIZED, "Unauthenticated"),
     UNAUTHORIZED("SEC-002", HttpStatus.FORBIDDEN, "Unauthorized"),
     USER_DUPLICATE("SEC-003", HttpStatus.INTERNAL_SERVER_ERROR, "Duplicate User"),
     USER_NOTFOUND("SEC-004", HttpStatus.INTERNAL_SERVER_ERROR, "User Not Exists"),
+    USER_INACTIVE("SEC-005", HttpStatus.INTERNAL_SERVER_ERROR, "User Banned"),
+
     OAUTH_RESOURCE_ERROR("OAUTH-001", HttpStatus.SERVICE_UNAVAILABLE, "OAuth Resource Unavailable");
 
 

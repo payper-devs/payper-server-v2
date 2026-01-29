@@ -2,6 +2,8 @@ package com.payper.server.auth.jwt.util;
 
 import com.payper.server.auth.jwt.RefreshTokenRepository;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
+import com.payper.server.auth.jwt.exception.ReissueException;
+import com.payper.server.global.response.ErrorCode;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
@@ -18,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -70,10 +73,9 @@ public class JwtRefreshTokenUtil {
         return count;
     }
 
-    public RefreshTokenEntity getRefreshTokenEntity(String refreshToken) {
+    public Optional<RefreshTokenEntity> getRefreshTokenEntity(String refreshToken) {
         return refreshTokenRepository
-                .findByHashedRefreshToken(hashRefreshToken(refreshToken))
-                .orElse(null);
+                .findByHashedRefreshToken(hashRefreshToken(refreshToken));
     }
 
 

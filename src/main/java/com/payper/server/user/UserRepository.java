@@ -18,5 +18,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByOauthIdAndActive(String oauthId, boolean active);
 
-    Optional<User> findByOauthIdAndNameAndAuthType(String oauthId, String name, AuthType authType);
+    Optional<User> findByOauthIdAndAuthType(String oauthId, AuthType authType);
 }
