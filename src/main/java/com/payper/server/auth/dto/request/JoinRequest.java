@@ -7,6 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class JoinRequest {
-    @NotBlank(message="OAuth Provider가 제공한 oauth resource access token이 필요합니다.")
+    //@NotBlank(message="OAuth Provider가 제공한 oauth resource access token이 필요합니다.")
     private String oauthToken;
 }
