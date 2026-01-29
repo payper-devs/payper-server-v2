@@ -4,9 +4,13 @@ import com.payper.server.global.exception.ApiException;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/test")
@@ -30,4 +34,6 @@ public class TestController {
     public ResponseEntity<ApiResponse<Void>> testFailure3() throws Exception {
         throw new Exception();
     }
+
+
 }
