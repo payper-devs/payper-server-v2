@@ -25,10 +25,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public User getActiveUserByUserIdentifier(String userIdentifier) {
         User user = userRepository.findByUserIdentifier(userIdentifier)
-                .orElseThrow(() -> new UserAuthenticationException(ErrorCode.USER_NOTFOUND));
+                .orElseThrow(() -> new UserAuthenticationException(ErrorCode.USER_NOT_FOUND_AUTH));
 
         if (!user.isActive()) {
-            throw new UserAuthenticationException(ErrorCode.USER_NOTFOUND);
+            throw new UserAuthenticationException(ErrorCode.USER_NOT_FOUND_AUTH);
         }
         return user;
     }
