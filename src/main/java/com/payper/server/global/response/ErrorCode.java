@@ -14,6 +14,7 @@ public enum ErrorCode {
     CONFLICT("GEN-004", HttpStatus.CONFLICT, "Conflict"),
     INTERNAL_SERVER_ERROR("GEN-005", HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error"),
 
+  
     // AUTHENTICATION - JWT
     JWT_ERROR("JWT_001", HttpStatus.UNAUTHORIZED, "토큰 만료 외 예외"),
     JWT_EXPIRED("JWT_002", HttpStatus.UNAUTHORIZED, "토큰 만료"),
@@ -28,6 +29,18 @@ public enum ErrorCode {
     MEMBER_NOTFOUND("SEC-004", HttpStatus.INTERNAL_SERVER_ERROR, "유저 없음"),
     OAUTH_RESOURCE_ERROR("OAUTH-001", HttpStatus.SERVICE_UNAVAILABLE, "OAuth 리소스 서버와 통신 중 예외");
 
+
+    // USER
+    USER_NOT_FOUND("USER-001", HttpStatus.NOT_FOUND, "User Not Found"),
+    NOT_POSTING_USER("USER-002", HttpStatus.FORBIDDEN, "Not Posting User"),
+
+    // POST
+    POST_NOT_FOUND("POST-001", HttpStatus.NOT_FOUND, "Post Not Found"),
+
+    // MERCHANT
+    MERCHANT_NOT_FOUND("MERCHANT-001", HttpStatus.NOT_FOUND, "Merchant Not Found")
+
+    ;
 
     private final String code;
     private final HttpStatus status;
