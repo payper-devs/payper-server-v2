@@ -68,9 +68,7 @@ public class JwtRefreshTokenUtil {
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public int deleteAllRefreshTokenEntity(String userIdentifier) {
-        int count = refreshTokenRepository.deleteByUserIdentifier(userIdentifier);
-        refreshTokenRepository.flush();
-        return count;
+        return refreshTokenRepository.deleteByUserIdentifier(userIdentifier);
     }
 
     public Optional<RefreshTokenEntity> getRefreshTokenEntity(String refreshToken) {
