@@ -1,21 +1,16 @@
 package com.payper.server.auth;
 
-import com.payper.server.auth.dto.JoinRequest;
-import com.payper.server.auth.dto.LoginRequest;
-import com.payper.server.auth.dto.LoginSuccessResponse;
-import com.payper.server.auth.dto.ReissueSuccessResponse;
+import com.payper.server.auth.dto.request.LoginRequest;
+import com.payper.server.auth.dto.response.LoginSuccessResponse;
+import com.payper.server.auth.dto.response.ReissueSuccessResponse;
 import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.response.ApiResponse;
-import com.payper.server.user.UserService;
 import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
-import com.payper.server.user.entity.UserRole;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor

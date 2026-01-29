@@ -1,6 +1,5 @@
 package com.payper.server.auth;
 
-import com.payper.server.auth.dto.JoinRequest;
 import com.payper.server.auth.exception.OAuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;

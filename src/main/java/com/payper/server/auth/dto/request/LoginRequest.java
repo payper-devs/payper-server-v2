@@ -1,4 +1,4 @@
-package com.payper.server.auth.dto;
+package com.payper.server.auth.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
