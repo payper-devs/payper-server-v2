@@ -16,10 +16,16 @@ public enum ErrorCode {
 
     // USER
     USER_NOT_FOUND("USER-001", HttpStatus.NOT_FOUND, "User Not Found"),
-    NOT_POSTING_USER("USER-002", HttpStatus.FORBIDDEN, "Not Posting User"),
 
     // POST
     POST_NOT_FOUND("POST-001", HttpStatus.NOT_FOUND, "Post Not Found"),
+    NOT_POST_AUTHOR("POST-002", HttpStatus.FORBIDDEN, "Not Post Author"),
+
+    // COMMENT
+    COMMENT_NOT_FOUND("COMMENT-001", HttpStatus.NOT_FOUND, "Comment Not Found"),
+    NOT_COMMENT_AUTHOR("COMMENT-002", HttpStatus.FORBIDDEN, "Not Comment Author"),
+    POST_NOT_COMMENTABLE("COMMENT-003", HttpStatus.BAD_REQUEST, "Cannot comment on deleted or inactive post"),
+    INVALID_PARENT_COMMENT("COMMENT-004", HttpStatus.BAD_REQUEST, "Invalid parent comment"),
 
     // MERCHANT
     MERCHANT_NOT_FOUND("MERCHANT-001", HttpStatus.NOT_FOUND, "Merchant Not Found")
