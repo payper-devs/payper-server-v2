@@ -27,7 +27,7 @@ public enum ErrorCode {
     UNAUTHORIZED("SEC-002", HttpStatus.FORBIDDEN, "접근권한 없음"),
     MEMBER_DUPLICATE("SEC-003", HttpStatus.INTERNAL_SERVER_ERROR, "이미 가입 유저 존재"),
     MEMBER_NOTFOUND("SEC-004", HttpStatus.INTERNAL_SERVER_ERROR, "유저 없음"),
-    OAUTH_RESOURCE_ERROR("OAUTH-001", HttpStatus.SERVICE_UNAVAILABLE, "OAuth 리소스 서버와 통신 중 예외");
+    OAUTH_RESOURCE_ERROR("OAUTH-001", HttpStatus.SERVICE_UNAVAILABLE, "OAuth 리소스 서버와 통신 중 예외"),
 
 
     // USER
