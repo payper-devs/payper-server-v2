@@ -12,6 +12,15 @@ public class ApiResponse<T> {
     private final T data;
     private final ExceptionDto error;
 
+    public static <T> ApiResponse<T> ok() {
+        return ApiResponse
+                .<T>builder()
+                .status(HttpStatus.OK.value())
+                .data(null)
+                .error(null)
+                .build();
+    }
+
     public static <T> ApiResponse<T> ok(@Nullable T data) {
         return ApiResponse
                 .<T>builder()
