@@ -23,24 +23,6 @@ public class PostController {
     private final PostService postService;
 
     /**
-     * 게시글 작성
-     * 가맹점에 대해 글을 작성함
-     * 가맹점 리스트에서 가맹점을 선택해서 해당 가맹점의 id를 넘겨 받음
-     * TODO 가맹점이 없을 때는 어떻게 해야할까?
-     *
-     * 가입된 사용자만 글을 작성할 수 있음
-     */
-    @PostMapping("/merchants/{merchantId}") // TODO: 흠 RESTFUL한 URL은 아닌 것 같음, posts가 뒤로 가는 게 맞는 것 같음
-    public ResponseEntity<ApiResponse<Long>> createPost(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
-            @PathVariable Long merchantId,
-            @RequestBody @Valid PostRequest.CreatePost request
-    ) {
-        Long postId = postService.createPost(1L, merchantId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(postId));
-    }
-
-    /**
      * 게시글 수정
      * 작성자만 수정 가능
      */
