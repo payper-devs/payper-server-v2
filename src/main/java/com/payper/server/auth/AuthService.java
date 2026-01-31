@@ -72,7 +72,6 @@ public class AuthService {
         };
     }
 
-
     public String enrollNewAuthTokens(User user, HttpServletResponse response) {
         Date issuedAt = new Date();
 
@@ -145,7 +144,8 @@ public class AuthService {
                 jwtRefreshTokenUtil.generateRefreshTokenEntity(userIdentifier, refreshToken);
 
 
-        jwtRefreshTokenUtil.generateCookieRefreshToken(refreshToken, response);
+        if(response!=null)
+            jwtRefreshTokenUtil.generateCookieRefreshToken(refreshToken, response);
 
         jwtRefreshTokenUtil.upsertRefreshTokenEntity(refreshTokenEntity);
     }

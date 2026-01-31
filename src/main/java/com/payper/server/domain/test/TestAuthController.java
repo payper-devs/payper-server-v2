@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 
-@RestController
+@RestController("/auth-test")
 public class TestAuthController {
     @GetMapping("/")
     public String index() {
