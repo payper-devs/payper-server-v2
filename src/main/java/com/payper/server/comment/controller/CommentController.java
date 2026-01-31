@@ -83,7 +83,7 @@ public class CommentController {
     /**
      * 게시글 댓글 조회
      *
-     * TODO 무한 스크롤
+     * TODO 부모 댓글은 페이지네이션, 대댓글은 전체 조회
      */
     @GetMapping("/posts/{postId}")
     public ResponseEntity<ApiResponse<List<CommentResponse.CommentItem>>> getPostComments(@PathVariable Long postId) {
