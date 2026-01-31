@@ -1,7 +1,7 @@
 package com.payper.server.auth.jwt.util;
 
+import com.payper.server.auth.AuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
-import com.payper.server.auth.jwt.exception.JwtValidAuthenticationException;
 import com.payper.server.global.response.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
@@ -76,10 +76,10 @@ public class JwtParseUtil {
                     .build()
                     .parseSignedClaims(jwtToken);
         } catch (ExpiredJwtException e) {
-            throw new JwtValidAuthenticationException(ErrorCode.JWT_EXPIRED);
+            throw new AuthException(ErrorCode.JWT_EXPIRED);
         } catch (UnsupportedJwtException | ClaimJwtException | SignatureException |
                  MalformedJwtException | IllegalArgumentException e) {
-            throw new JwtValidAuthenticationException(ErrorCode.JWT_ERROR);
+            throw new AuthException(ErrorCode.JWT_ERROR);
         }
     }
 }

@@ -6,9 +6,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -19,6 +19,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
+@Slf4j
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     private final ObjectMapper objectMapper;
 
@@ -31,14 +32,15 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         ApiResponse<String> failResponseDto;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(authentication==null||!(authentication.isAuthenticated())) {
+        if (authentication == null || !(authentication.isAuthenticated())) {
             failResponseDto =
                     ApiResponse.fail(ErrorCode.UNAUTHENTICATED, accessDeniedException.getMessage());
-        }
-        else{
+        } else {
             failResponseDto =
                     ApiResponse.fail(ErrorCode.UNAUTHORIZED, accessDeniedException.getMessage());
         }
+
+        log.warn("[AUTH_EXCEPTION IN FILTER] code={}, message={}",failResponseDto.getError().getCode(),failResponseDto.getError().getMessage());
 
         response.setStatus(failResponseDto.getStatus());
         response.setContentType("application/json");

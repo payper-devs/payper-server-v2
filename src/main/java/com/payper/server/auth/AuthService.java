@@ -1,15 +1,13 @@
 package com.payper.server.auth;
 
-import com.payper.server.auth.exception.OAuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
-import com.payper.server.auth.jwt.exception.JwtValidAuthenticationException;
-import com.payper.server.auth.jwt.exception.ReissueException;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.auth.jwt.util.JwtRefreshTokenUtil;
 import com.payper.server.auth.jwt.util.JwtTokenUtil;
 import com.payper.server.auth.util.KakaoOAuthUtilImpl;
 import com.payper.server.auth.util.OAuthUserInfo;
+import com.payper.server.global.exception.ApiException;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.UserService;
 import com.payper.server.user.entity.AuthType;
@@ -57,7 +55,7 @@ public class AuthService {
     public OAuthUserInfo findOAuthUserInfo(String oauthToken, AuthType authType) {
         return switch (authType) {
             case AuthType.KAKAO -> kakaoOAuthUtil.getUserInfoFromOAuthToken(oauthToken);
-            default -> throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
+            default -> throw new ApiException(ErrorCode.OAUTH_RESOURCE_ERROR);
         };
     }
 
@@ -77,7 +75,7 @@ public class AuthService {
          * */
 
         if (!StringUtils.hasText(refreshToken)) {
-            throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+            throw new ApiException(ErrorCode.JWT_REISSUE_ERROR);
         }
 
         // 1) JWT 자체 검증(서명/만료/형식) + 타입 검사
@@ -86,15 +84,15 @@ public class AuthService {
         try {
             jwtType = jwtParseUtil.getJwtType(refreshToken);
             if (jwtType != JwtType.REFRESH) {
-                throw new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
+                throw new ApiException(ErrorCode.JWT_REISSUE_ERROR);
             }
             userIdentifier = jwtParseUtil.getUserIdentifier(refreshToken);
-        } catch (JwtValidAuthenticationException e) {
+        } catch (AuthException e) {
             throw
                     switch (e.getErrorCode()) {
-                        case JWT_ERROR -> new ReissueException(ErrorCode.JWT_REISSUE_ERROR);
-                        case JWT_EXPIRED -> new ReissueException(ErrorCode.JWT_REISSUE_EXPIRED);
-                        default -> new ReissueException(ErrorCode.REISSUE_ERROR);
+                        case JWT_ERROR -> new ApiException(ErrorCode.JWT_REISSUE_ERROR);
+                        case JWT_EXPIRED -> new ApiException(ErrorCode.JWT_REISSUE_EXPIRED);
+                        default -> new ApiException(ErrorCode.REISSUE_ERROR);
                     };
         }
 
@@ -105,7 +103,7 @@ public class AuthService {
                 },
                 () -> {
                     jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
-                    throw new ReissueException(ErrorCode.JWT_REISSUE_OLD);
+                    throw new ApiException(ErrorCode.JWT_REISSUE_OLD);
                 }
         );
 

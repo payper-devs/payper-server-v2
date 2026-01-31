@@ -1,6 +1,6 @@
 package com.payper.server.user;
 
-import com.payper.server.auth.exception.UserAuthenticationException;
+import com.payper.server.auth.AuthException;
 import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.entity.User;
@@ -29,7 +29,7 @@ public class UserService {
         };
 
         if (findUser.isPresent()) {
-            throw new UserAuthenticationException(ErrorCode.USER_DUPLICATE);
+            throw new AuthException(ErrorCode.USER_DUPLICATE);
         }
     }
 
@@ -43,7 +43,7 @@ public class UserService {
         user.ifPresent(
                 u -> {
                     if (!u.isActive()) {
-                        throw new UserAuthenticationException(ErrorCode.USER_INACTIVE);
+                        throw new AuthException(ErrorCode.USER_INACTIVE);
                     }
                 }
         );

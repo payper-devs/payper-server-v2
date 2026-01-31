@@ -1,7 +1,7 @@
 package com.payper.server.security;
 
+import com.payper.server.auth.AuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
-import com.payper.server.auth.jwt.exception.JwtValidAuthenticationException;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.global.response.ErrorCode;
 import jakarta.annotation.Nullable;
@@ -25,7 +25,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         String accessToken = (String) authentication.getCredentials();
 
         if (jwtParseUtil.getJwtType(accessToken) != JwtType.ACCESS) {
-            throw new JwtValidAuthenticationException(ErrorCode.JWT_ERROR);
+            throw new AuthException(ErrorCode.JWT_ERROR);
         }
 
         String userIdentifier = jwtParseUtil.getUserIdentifier(accessToken);

@@ -1,6 +1,6 @@
 package com.payper.server.auth.util;
 
-import com.payper.server.auth.exception.OAuthException;
+import com.payper.server.global.exception.ApiException;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.entity.AuthType;
 import jakarta.annotation.PostConstruct;
@@ -42,7 +42,7 @@ public class KakaoOAuthUtilImpl implements OAuthUtil {
                         HttpStatusCode::isError,
                         (request, response) ->
                         {
-                            throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
+                            throw new ApiException(ErrorCode.OAUTH_RESOURCE_ERROR);
                         }
                 )
                 .body(String.class);
@@ -59,7 +59,7 @@ public class KakaoOAuthUtilImpl implements OAuthUtil {
 
             return new OAuthUserInfo(name, kakaoId, AuthType.KAKAO);
         } catch (Exception e) {
-            throw new OAuthException(ErrorCode.OAUTH_RESOURCE_ERROR);
+            throw new ApiException(ErrorCode.OAUTH_RESOURCE_ERROR);
         }
     }
 }

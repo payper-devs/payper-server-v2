@@ -1,9 +1,9 @@
 package com.payper.server;
 
+import com.payper.server.auth.AuthException;
 import com.payper.server.auth.jwt.RefreshTokenRepository;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.entity.JwtType;
-import com.payper.server.auth.jwt.exception.JwtValidAuthenticationException;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.auth.jwt.util.JwtProperties;
 import com.payper.server.auth.jwt.util.JwtRefreshTokenUtil;
@@ -115,7 +115,7 @@ class JwtModulesSpringBootIntegrationTest {
 
         // when & then
         assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(expired))
-                .isInstanceOf(JwtValidAuthenticationException.class);
+                .isInstanceOf(AuthException.class);
     }
 
     @Test

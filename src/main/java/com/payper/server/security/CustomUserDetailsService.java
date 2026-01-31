@@ -1,6 +1,6 @@
 package com.payper.server.security;
 
-import com.payper.server.auth.exception.UserAuthenticationException;
+import com.payper.server.auth.AuthException;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.repository.UserRepository;
 import com.payper.server.user.entity.User;
@@ -25,10 +25,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     public User getActiveUserByUserIdentifier(String userIdentifier) {
         User user = userRepository.findByUserIdentifier(userIdentifier)
-                .orElseThrow(() -> new UserAuthenticationException(ErrorCode.USER_NOT_FOUND_AUTH));
+                .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND_AUTH));
 
         if (!user.isActive()) {
-            throw new UserAuthenticationException(ErrorCode.USER_NOT_FOUND_AUTH);
+            throw new AuthException(ErrorCode.USER_NOT_FOUND_AUTH);
         }
         return user;
     }
