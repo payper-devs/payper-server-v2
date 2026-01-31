@@ -39,16 +39,29 @@ public class AuthService {
         //먼저 검증
         Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
 
+        user.ifPresent(
+                u->{
+                    log.info("가입 유저 확인 - userId: {}, userName: {}, userRole: {}", u.getId(),u.getName(),u.getUserRole().name());
+                }
+        );
+
         return user.orElseGet(
-                () -> userService.save(
-                        User.create(
-                                AuthType.KAKAO,
-                                oauthUserInfo.getName(),
-                                oauthUserInfo.getOauthId(),
-                                UserRole.USER,
-                                true
-                        )
-                )
+                () -> {
+                    User savedUser = userService.save(
+                            User.create(
+                                    AuthType.KAKAO,
+                                    oauthUserInfo.getName(),
+                                    oauthUserInfo.getOauthId(),
+                                    UserRole.USER,
+                                    true
+                            )
+                    );
+
+                    log.info("유저 가입 & 저장 - userId: {}, userName: {}, userRole: {}",
+                            savedUser.getId(),savedUser.getName(),savedUser.getUserRole().name());
+
+                    return savedUser;
+                }
         );
     }
 
@@ -62,8 +75,13 @@ public class AuthService {
 
     public String enrollNewAuthTokens(User user, HttpServletResponse response) {
         Date issuedAt = new Date();
+
         upsertRefreshTokenAndEntity(user.getUserIdentifier(), response, issuedAt);
-        return upsertAccessToken(user.getUserIdentifier(), issuedAt);
+        String accessToken = upsertAccessToken(user.getUserIdentifier(), issuedAt);
+
+        log.info("업서트 토큰 - userId: {}, issuedAt: {}",user.getId(),issuedAt);
+
+        return accessToken;
     }
 
     public String reissueAccessToken(String refreshToken, HttpServletResponse response) {
@@ -107,8 +125,13 @@ public class AuthService {
                 }
         );
 
-        upsertRefreshTokenAndEntity(userIdentifier, response, jwtParseUtil.getIssuedAt(refreshToken));
-        return upsertAccessToken(userIdentifier, new Date());
+        Date reissuedAt = jwtParseUtil.getIssuedAt(refreshToken);
+        upsertRefreshTokenAndEntity(userIdentifier, response, reissuedAt);
+        String accessToken = upsertAccessToken(userIdentifier, new Date());
+
+        log.info("토큰 재발급 완료 reissuedAt: {}",reissuedAt);
+
+        return accessToken;
     }
 
     private String upsertAccessToken(String userIdentifier, Date issuedAt) {
@@ -139,5 +162,7 @@ public class AuthService {
                 r ->
                         jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(r.getUserIdentifier())
         );
+
+        log.info("리프레시 토큰 만료 완료");
     }
 }
