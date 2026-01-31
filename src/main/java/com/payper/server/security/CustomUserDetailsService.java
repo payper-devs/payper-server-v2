@@ -2,7 +2,7 @@ package com.payper.server.security;
 
 import com.payper.server.auth.exception.UserAuthenticationException;
 import com.payper.server.global.response.ErrorCode;
-import com.payper.server.user.UserRepository;
+import com.payper.server.user.repository.UserRepository;
 import com.payper.server.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

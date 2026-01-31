@@ -4,6 +4,7 @@ import com.payper.server.auth.exception.UserAuthenticationException;
 import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.entity.User;
+import com.payper.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

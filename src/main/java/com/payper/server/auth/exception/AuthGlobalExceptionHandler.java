@@ -1,7 +1,6 @@
-package com.payper.server.auth;
+package com.payper.server.auth.exception;
 
-import com.payper.server.auth.exception.OAuthException;
-import com.payper.server.auth.exception.UserAuthenticationException;
+import com.payper.server.auth.AuthController;
 import com.payper.server.auth.jwt.exception.ReissueException;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;

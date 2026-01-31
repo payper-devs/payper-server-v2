@@ -3,7 +3,7 @@ package com.payper.server;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.RefreshTokenRepository;
 import com.payper.server.security.CustomUserDetails;
-import com.payper.server.user.UserRepository;
+import com.payper.server.user.repository.UserRepository;
 import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
 import com.payper.server.user.entity.UserRole;
