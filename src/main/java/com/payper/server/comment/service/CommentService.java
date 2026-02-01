@@ -17,7 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+
+import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
 @Slf4j
 @Service
@@ -149,5 +152,16 @@ public class CommentService {
         return comments.stream()
                 .map(CommentResponse.CommentItem::from)
                 .toList();
+    }
+
+    /**
+     * 게시글 삭제 시 댓글 삭제(soft delete)
+     */
+    @Transactional(propagation = REQUIRES_NEW)
+    public void softDeleteByPostId(Long postId) {
+        long deletedCount = commentRepository.softDeleteByPostId(postId, LocalDateTime.now());
+        if (deletedCount > 0) {
+            postRepository.decreaseCommentCount(postId, deletedCount);
+        }
     }
 }

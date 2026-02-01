@@ -38,7 +38,6 @@ public class PostController {
     /**
      * 게시글 삭제
      * 작성자만 삭제 가능
-     * TODO 댓글도 같이 soft delete
      */
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(

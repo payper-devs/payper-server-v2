@@ -3,6 +3,7 @@ package com.payper.server.comment.repository;
 import com.payper.server.comment.entity.Comment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -58,13 +59,13 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     """)
     List<Comment> findVisibleCommentsByPostId(Long postId);
 
-//    @Modifying
-//    @Query("""
-//        update Comment c
-//        set c.isDeleted = true,
-//            c.deletedAt = CURRENT_TIMESTAMP
-//        where c.post.id = :postId
-//          and c.isDeleted = false
-//    """)
-//    void softDeleteByPostId(Long postId);
+    @Modifying
+    @Query("""
+        update Comment c
+        set c.isDeleted = true,
+            c.deletedAt = :now
+        where c.post.id = :postId
+          and c.isDeleted = false
+    """)
+    long softDeleteByPostId(@Param("postId") Long postId, @Param("now") LocalDateTime now);
 }

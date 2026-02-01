@@ -110,10 +110,10 @@ public class Post extends BaseTimeEntity {
     }
 
     /**
-     * 댓글 삭제
+     * 댓글 감소
      */
     public void decreaseCommentCount() {
-        this.commentCount--;
+        this.commentCount = Math.max(0, this.commentCount - 1);
     }
 
     /**
@@ -127,6 +127,7 @@ public class Post extends BaseTimeEntity {
 
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
+        this.commentCount = 0;
     }
 
     /**
