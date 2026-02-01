@@ -16,6 +16,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByIdAndIsDeletedFalse(Long id);
 
+    boolean existsByIdAndIsDeletedFalse(Long id);
+
     @Query(
         value = """
           select p from Post p

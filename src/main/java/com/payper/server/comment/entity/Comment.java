@@ -71,7 +71,33 @@ public class Comment extends BaseTimeEntity {
      * soft delete
      */
     public void delete() {
+        if (this.isDeleted) { // 멱등성 고려
+            return;
+        }
+
         this.isDeleted = true;
-        this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.deletedAt = LocalDateTime.now();
+        this.post.decreaseCommentCount();
+    }
+
+    /**
+     * 댓글 생성
+     */
+    public static Comment create(Post post, User user, Comment parentComment, String content) {
+        return Comment.builder()
+                .post(post)
+                .user(user)
+                .parentComment(parentComment)
+                .content(content)
+                .isDeleted(false)
+                .deletedAt(null)
+                .build();
+    }
+
+    /**
+     * 댓글 수정
+     */
+    public void update(String content) {
+        this.content = content;
     }
 }
