@@ -2,6 +2,7 @@ package com.payper.server.comment.repository;
 
 import com.payper.server.comment.entity.Comment;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -23,7 +24,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
           and c.isDeleted = false
         order by c.createdAt desc, c.id desc
     """)
-    List<Comment> findFirstMyCommentPage(@Param("userId") Long userId, Pageable pageable);
+    Slice<Comment> findFirstMyCommentPage(@Param("userId") Long userId, Pageable pageable);
 
     @Query("""
         select c from Comment c
@@ -35,7 +36,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
               )
         order by c.createdAt desc, c.id desc
     """)
-    List<Comment> findNextMyCommentPage(
+    Slice<Comment> findNextMyCommentPage(
             @Param("userId") Long userId,
             @Param("cursorId") Long cursorId,
             @Param("createdAt") LocalDateTime createdAt,

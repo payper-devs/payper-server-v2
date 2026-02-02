@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,7 +120,7 @@ public class CommentService {
     public CommentResponse.MyCommentList getMyComments(Long userId, Long cursorId, int size) {
         Pageable pageable = PageRequest.of(0, size);
 
-        List<Comment> comments;
+        Slice<Comment> comments;
 
         if (cursorId == null) { // 첫 요청
             comments = commentRepository.findFirstMyCommentPage(userId, pageable);
@@ -130,10 +131,10 @@ public class CommentService {
             comments = commentRepository.findNextMyCommentPage(userId, cursorId, lastComment.getCreatedAt(), pageable);
         }
 
-        boolean hasNext = comments.size() == size;
-        Long nextCursor = hasNext ? comments.get(comments.size()-1).getId() : null;
+        Long nextCursor = comments.hasNext() ? comments.getContent().get(comments.getContent().size()-1).getId() : null;
+        log.info("다음 조회 ID는 {}습니다. {}", comments.hasNext() ? "있" : "없", nextCursor);
 
-        return CommentResponse.MyCommentList.from(comments, nextCursor, hasNext);
+        return CommentResponse.MyCommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
     /**
