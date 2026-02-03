@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/v1/comments")
 @RequiredArgsConstructor
@@ -83,11 +81,29 @@ public class CommentController {
     /**
      * 게시글 댓글 조회
      *
-     * TODO 부모 댓글은 페이지네이션, 대댓글은 전체 조회
+     * 부모 댓글로 페이지네이션
+     * 주의) 부모 댓글이 삭제되어도 자식 댓글이 남아있으면 [삭제된 댓글입니다]로 제공
      */
     @GetMapping("/posts/{postId}")
-    public ResponseEntity<ApiResponse<List<CommentResponse.CommentItem>>> getPostComments(@PathVariable Long postId) {
-        List<CommentResponse.CommentItem> response = commentService.getPostComments(postId);
+    public ResponseEntity<ApiResponse<CommentResponse.CommentList>> getPostComments(
+            @PathVariable Long postId,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        CommentResponse.CommentList response = commentService.getPostComments(postId, cursorId, size);
+        return ResponseEntity.ok(ApiResponse.ok(response));
+    }
+
+    /**
+     * 자식 댓글 조회
+     */
+    @GetMapping("/{parentId}/replies")
+    public ResponseEntity<ApiResponse<CommentResponse.CommentList>> getReplies(
+            @PathVariable Long parentId,
+            @RequestParam(required = false) Long cursorId,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        CommentResponse.CommentList response = commentService.getReplies(parentId, cursorId, size);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 }

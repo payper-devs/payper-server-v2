@@ -20,6 +20,76 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("""
         select c from Comment c
+        join fetch c.user
+        where c.post.id = :postId
+          and c.parentComment is null
+          and (
+            c.isDeleted = false
+            or exists (
+                select 1 from Comment child
+                where child.parentComment = c
+                  and child.isDeleted = false
+            )
+          )
+        order by c.createdAt asc, c.id asc
+    """)
+    Slice<Comment> findParent(@Param("postId") Long postId, Pageable pageable);
+
+    @Query("""
+        select c from Comment c
+        join fetch c.user
+        where c.post.id = :postId
+          and c.parentComment is null
+          and (
+                c.isDeleted = false
+                or exists (
+                    select 1 from Comment child
+                    where child.parentComment = c
+                      and child.isDeleted = false
+                )
+              )
+          and (
+                c.createdAt > :createdAt
+                or (c.createdAt = :createdAt and c.id > :cursorId)
+              )
+        order by c.createdAt asc, c.id asc
+    """)
+    Slice<Comment> findParentNext(
+            @Param("postId") Long postId,
+            @Param("cursorId") Long cursorId,
+            @Param("createdAt") LocalDateTime createdAt,
+            Pageable pageable
+    );
+
+    @Query("""
+        select c from Comment c
+        join fetch c.user
+        where c.parentComment.id = :parentId
+          and c.isDeleted = false
+        order by c.createdAt asc, c.id asc
+    """)
+    Slice<Comment> findReply(@Param("parentId") Long parentId, Pageable pageable);
+
+    @Query("""
+        select c from Comment c
+        join fetch c.user
+        where c.parentComment.id = :parentId
+          and c.isDeleted = false
+          and (
+                c.createdAt > :createdAt
+                or (c.createdAt = :createdAt and c.id > :cursorId)
+              )
+        order by c.createdAt asc, c.id asc
+    """)
+    Slice<Comment> findReplyNext(
+            @Param("parentId") Long parentId,
+            @Param("cursorId") Long cursorId,
+            @Param("createdAt") LocalDateTime createdAt,
+            Pageable pageable
+    );
+
+    @Query("""
+        select c from Comment c
         where c.user.id = :userId
           and c.isDeleted = false
         order by c.createdAt desc, c.id desc

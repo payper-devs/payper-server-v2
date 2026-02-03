@@ -8,7 +8,26 @@ import java.util.List;
 public class CommentResponse {
 
     /**
-     * Post에 달린 Comment Item
+     * Post에 달린 Comment 리스트
+     */
+    public record CommentList(
+            List<CommentResponse.CommentItem> comments,
+            Long nextCursor,
+            boolean hasNext
+    ) {
+        public static CommentList from(List<Comment> comments, Long nextCursor, boolean hasNext) {
+            return new CommentList(
+                    comments.stream()
+                            .map(CommentResponse.CommentItem::from)
+                            .toList(),
+                    nextCursor,
+                    hasNext
+            );
+        }
+    }
+
+    /**
+     * Comment Item
      */
     public record CommentItem(
             Long id,

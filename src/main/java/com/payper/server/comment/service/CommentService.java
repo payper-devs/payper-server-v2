@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.springframework.transaction.annotation.Propagation.REQUIRES_NEW;
 
@@ -141,18 +140,53 @@ public class CommentService {
      * 게시글 댓글 조회
      */
     @Transactional(readOnly = true)
-    public List<CommentResponse.CommentItem> getPostComments(Long postId) {
+    public CommentResponse.CommentList getPostComments(Long postId, Long cursorId, int size) {
 
         // 게시글 존재 및 삭제 여부 확인
         if(!postRepository.existsByIdAndIsDeletedFalse(postId)) {
             throw new ApiException(ErrorCode.POST_NOT_FOUND);
         }
 
-        List<Comment> comments = commentRepository.findVisibleCommentsByPostId(postId);
+        Pageable pageable = PageRequest.of(0, size);
 
-        return comments.stream()
-                .map(CommentResponse.CommentItem::from)
-                .toList();
+        Slice<Comment> comments;
+
+        if (cursorId == null) {
+            comments = commentRepository.findParent(postId, pageable);
+        } else {
+            Comment lastComment = commentRepository.findById(cursorId)
+                    .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+
+            comments = commentRepository.findParentNext(postId, cursorId, lastComment.getCreatedAt(), pageable);
+        }
+
+        Long nextCursor = comments.hasNext() ? comments.getContent().get(comments.getContent().size()-1).getId() : null;
+        return CommentResponse.CommentList.from(comments.getContent(), nextCursor, comments.hasNext());
+    }
+
+    @Transactional(readOnly = true)
+    public CommentResponse.CommentList getReplies(Long parentId, Long cursorId, int size) {
+
+        // 부모 댓글 존재 여부 확인
+        if(!commentRepository.existsById(parentId)) {
+            throw new ApiException(ErrorCode.COMMENT_NOT_FOUND);
+        }
+
+        Pageable pageable = PageRequest.of(0, size);
+
+        Slice<Comment> comments;
+
+        if (cursorId == null) {
+            comments = commentRepository.findReply(parentId, pageable);
+        } else {
+            Comment lastComment = commentRepository.findById(cursorId)
+                    .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
+
+            comments = commentRepository.findReplyNext(parentId, cursorId, lastComment.getCreatedAt(), pageable);
+        }
+
+        Long nextCursor = comments.hasNext() ? comments.getContent().get(comments.getContent().size()-1).getId() : null;
+        return CommentResponse.CommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
     /**
