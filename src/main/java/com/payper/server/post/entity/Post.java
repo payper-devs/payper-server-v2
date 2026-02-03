@@ -135,7 +135,8 @@ public class Post extends BaseTimeEntity {
      */
     public void inactivate() {
         this.isInactive = true;
-        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+//        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.inactiveAt = LocalDateTime.now();
     }
 
     /**

@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -112,23 +111,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("createdAt") LocalDateTime createdAt,
             Pageable pageable
     );
-
-    @Query("""
-            select c from Comment c
-            join fetch c.user
-            where c.post.id = :postId
-            and(
-                c.isDeleted = false
-                or exists (
-                    select 1
-                    from Comment child
-                    where child.parentComment = c
-                        and child.isDeleted = false
-                )
-            )
-            ORDER BY COALESCE(c.parentComment.id, c.id), c.createdAt, c.id
-    """)
-    List<Comment> findVisibleCommentsByPostId(Long postId);
 
     @Modifying
     @Query("""

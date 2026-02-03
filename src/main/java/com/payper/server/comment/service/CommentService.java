@@ -131,8 +131,6 @@ public class CommentService {
         }
 
         Long nextCursor = comments.hasNext() ? comments.getContent().get(comments.getContent().size()-1).getId() : null;
-        log.info("다음 조회 ID는 {}습니다. {}", comments.hasNext() ? "있" : "없", nextCursor);
-
         return CommentResponse.MyCommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
