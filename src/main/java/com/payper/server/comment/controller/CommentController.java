@@ -6,7 +6,6 @@ import com.payper.server.comment.service.CommentService;
 import com.payper.server.global.response.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,22 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-
-    /**
-     * 댓글 작성
-     * is inactive = false, is deleted = false 상태의 post에만 댓글을 작성할 수 있음
-     *
-     * 부모 댓글이 삭제되어도 대댓글 작성 허용
-     */
-    @PostMapping("/posts/{postId}")
-    public ResponseEntity<ApiResponse<Long>> createComment(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
-            @PathVariable Long postId,
-            @RequestBody @Valid CommentRequest.CreateComment request
-    ) {
-        Long commentId = commentService.createComment(1L, postId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(commentId));
-    }
 
     /**
      * 댓글 수정
@@ -75,22 +58,6 @@ public class CommentController {
             @RequestParam(defaultValue = "20") int size
     ) {
         CommentResponse.MyCommentList response = commentService.getMyComments(1L, cursorId, size);
-        return ResponseEntity.ok(ApiResponse.ok(response));
-    }
-
-    /**
-     * 게시글 댓글 조회
-     *
-     * 부모 댓글로 페이지네이션
-     * 주의) 부모 댓글이 삭제되어도 자식 댓글이 남아있으면 [삭제된 댓글입니다]로 제공
-     */
-    @GetMapping("/posts/{postId}")
-    public ResponseEntity<ApiResponse<CommentResponse.CommentList>> getPostComments(
-            @PathVariable Long postId,
-            @RequestParam(required = false) Long cursorId,
-            @RequestParam(defaultValue = "20") int size
-    ) {
-        CommentResponse.CommentList response = commentService.getPostComments(postId, cursorId, size);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
