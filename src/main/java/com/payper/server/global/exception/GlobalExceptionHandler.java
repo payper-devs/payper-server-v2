@@ -1,5 +1,6 @@
 package com.payper.server.global.exception;
 
+import com.payper.server.auth.AuthException;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.global.response.FieldErrorDto;
@@ -42,6 +43,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(errorCode.getStatus())
                 .body(ApiResponse.fail(errorCode, fieldErrors));
+    }
+
+    // 시큐리티 필터 밖에서 발생한 Auth 예외
+    @ExceptionHandler(AuthException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAuthException(AuthException e) {
+        log.warn("[AUTH_EXCEPTION] code={}, message={}", e.getErrorCode().getCode(), e.getErrorCode().getMessage(), e);
+        return buildErrorResponse(e.getErrorCode());
     }
 
     // 그 외 모든 예외 - 서버 오류
