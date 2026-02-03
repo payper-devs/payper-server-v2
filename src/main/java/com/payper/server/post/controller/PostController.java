@@ -9,6 +9,7 @@ import com.payper.server.post.dto.PostResponse;
 import com.payper.server.post.dto.PostSortType;
 import com.payper.server.post.entity.PostType;
 import com.payper.server.post.service.PostService;
+import com.payper.server.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,11 +34,11 @@ public class PostController {
      */
     @PutMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> updatePost(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId,
             @RequestBody @Valid PostRequest.UpdatePost request
     ) {
-        postService.updatePost(1L, postId, request);
+        postService.updatePost(user.getId(), postId, request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -46,10 +48,10 @@ public class PostController {
      */
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId
     ) {
-        postService.deletePost(1L, postId);
+        postService.deletePost(user.getId(), postId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -97,11 +99,11 @@ public class PostController {
      */
     @PostMapping("/{postId}/comments")
     public ResponseEntity<ApiResponse<Long>> createComment(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId,
             @RequestBody @Valid CommentRequest.CreateComment request
     ) {
-        Long commentId = commentService.createComment(1L, postId, request);
+        Long commentId = commentService.createComment(user.getId(), postId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(commentId));
     }
 

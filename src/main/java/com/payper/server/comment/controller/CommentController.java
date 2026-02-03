@@ -4,9 +4,11 @@ import com.payper.server.comment.dto.CommentRequest;
 import com.payper.server.comment.dto.CommentResponse;
 import com.payper.server.comment.service.CommentService;
 import com.payper.server.global.response.ApiResponse;
+import com.payper.server.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,11 +23,11 @@ public class CommentController {
      */
     @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> updateComment(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long commentId,
             @RequestBody @Valid CommentRequest.UpdateComment request
     ) {
-        commentService.updateComment(1L, commentId, request);
+        commentService.updateComment(user.getId(), commentId, request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -37,10 +39,10 @@ public class CommentController {
      */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long commentId) {
 
-        commentService.deleteComment(1L, commentId);
+        commentService.deleteComment(user.getId(), commentId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
@@ -53,11 +55,11 @@ public class CommentController {
      */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<CommentResponse.MyCommentList>> getMyComments(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) Long cursorId,
             @RequestParam(defaultValue = "20") int size
     ) {
-        CommentResponse.MyCommentList response = commentService.getMyComments(1L, cursorId, size);
+        CommentResponse.MyCommentList response = commentService.getMyComments(user.getId(), cursorId, size);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 

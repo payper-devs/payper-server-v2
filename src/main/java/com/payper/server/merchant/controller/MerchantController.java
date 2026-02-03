@@ -3,9 +3,11 @@ package com.payper.server.merchant.controller;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.post.dto.PostRequest;
 import com.payper.server.post.service.PostService;
+import com.payper.server.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,11 +26,11 @@ public class MerchantController {
      */
     @PostMapping("/{merchantId}/posts")
     public ResponseEntity<ApiResponse<Long>> createPost(
-            // TODO @AuthenticationPrincipal CustomUserDetails user,
+            @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long merchantId,
             @RequestBody @Valid PostRequest.CreatePost request
     ) {
-        Long postId = postService.createPost(1L, merchantId, request);
+        Long postId = postService.createPost(user.getId(), merchantId, request);
         return ResponseEntity.status(201).body(ApiResponse.created(postId));
     }
 }

@@ -48,11 +48,27 @@ public class SecurityConfig {
                 requestMatcher.matcher(HttpMethod.GET, "/swagger-ui/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/v3/api-docs/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/favicon.ico"),
-                requestMatcher.matcher("/auth/**")
+                requestMatcher.matcher("/auth/**"),
+                requestMatcher.matcher(HttpMethod.GET, "/api/v1/posts/**"),
+                requestMatcher.matcher(HttpMethod.GET, "/api/v1/comments/*/replies")
         );
+        // 인증이 필요한 요청
         authenticatedRequestMatcher = new OrRequestMatcher(
                 //requestMatcher.matcher("/**"),
-                requestMatcher.matcher(HttpMethod.GET, "/me")
+                requestMatcher.matcher(HttpMethod.GET, "/me"),
+
+                // 댓글 관련
+                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/comments/**"),
+                requestMatcher.matcher(HttpMethod.DELETE, "/api/v1/comments/**"),
+                requestMatcher.matcher(HttpMethod.GET, "/api/v1/comments/me"),
+
+                // 게시물 관련
+                requestMatcher.matcher(HttpMethod.POST, "/api/v1/posts/**"),
+                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/posts/**"),
+                requestMatcher.matcher(HttpMethod.DELETE, "/api/v1/posts/**"),
+
+                // 가맹점 관련
+                requestMatcher.matcher(HttpMethod.POST, "/api/v1/merchants/**")
         );
         adminRequestMatcher = new OrRequestMatcher(
                 requestMatcher.matcher(HttpMethod.GET, "/admin/**")
