@@ -33,6 +33,10 @@ public class CustomUserDetails implements UserDetails {
         return user.getId().toString();
     }
 
+    public Long getId() {
+        return user.getId();
+    }
+
     @Override
     public boolean isEnabled() {
         return user.isActive();

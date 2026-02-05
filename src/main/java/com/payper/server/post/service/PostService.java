@@ -1,5 +1,6 @@
 package com.payper.server.post.service;
 
+import com.payper.server.comment.service.CommentService;
 import com.payper.server.global.exception.ApiException;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.merchant.entity.Merchant;
@@ -26,6 +27,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final MerchantRepository merchantRepository;
+    private final CommentService commentService;
 
     /**
      * 게시글 작성
@@ -53,13 +55,13 @@ public class PostService {
      */
     @Transactional
     public void updatePost(Long userId, Long postId, PostRequest.UpdatePost request) {
-        // 게시글 조회
-        Post post = postRepository.findById(postId)
+        // 게시글 조회 및 삭제 여부 체크
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 수정 권한 조회
         if(!userId.equals(post.getAuthor().getId())) {
-            throw new ApiException(ErrorCode.NOT_POSTING_USER);
+            throw new ApiException(ErrorCode.NOT_POST_AUTHOR);
         }
 
         // 게시글 수정
@@ -79,15 +81,19 @@ public class PostService {
 
         // 게시글 삭제 권한 조회
         if(!userId.equals(post.getAuthor().getId())) {
-            throw new ApiException(ErrorCode.NOT_POSTING_USER);
+            throw new ApiException(ErrorCode.NOT_POST_AUTHOR);
         }
 
         // 게시글 삭제
         post.delete();
         log.info("게시글 삭제 완료 - postId: {}", post.getId());
 
-        // TODO 댓글 삭제 (대댓글도 삭제)
-//        commentRepository.softDeleteByPostId(postId);
+        // 댓글 삭제 - 댓글 삭제에 실패해도 게시물 삭제는 진행되어야 하므로 try-catch로 묶음
+        try {
+            commentService.softDeleteByPostId(postId);
+        } catch (Exception e) {
+            log.error("댓글 삭제 실패 postId={}", postId);
+        }
     }
 
     /**

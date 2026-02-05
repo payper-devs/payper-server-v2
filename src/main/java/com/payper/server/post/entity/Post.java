@@ -110,10 +110,10 @@ public class Post extends BaseTimeEntity {
     }
 
     /**
-     * 댓글 삭제
+     * 댓글 감소
      */
     public void decreaseCommentCount() {
-        this.commentCount--;
+        this.commentCount = Math.max(0, this.commentCount - 1);
     }
 
     /**
@@ -127,6 +127,7 @@ public class Post extends BaseTimeEntity {
 
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
+        this.commentCount = 0;
     }
 
     /**
@@ -134,9 +135,13 @@ public class Post extends BaseTimeEntity {
      */
     public void inactivate() {
         this.isInactive = true;
-        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+//        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.inactiveAt = LocalDateTime.now();
     }
 
+    /**
+     * 게시글 생성
+     */
     public static Post create(User author, Merchant merchant, PostType type, String title, String content) {
         return Post.builder()
                 .author(author)
@@ -147,8 +152,18 @@ public class Post extends BaseTimeEntity {
                 .build();
     }
 
+    /**
+     * 게시글 수정
+     */
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    /**
+     * 댓글을 달 수 있는 게시글인지 체크
+     */
+    public boolean isCommentable() {
+        return !this.isDeleted && !this.isInactive;
     }
 }
