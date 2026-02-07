@@ -149,6 +149,12 @@ public class Post extends BaseTimeEntity {
                 .type(type)
                 .title(title)
                 .content(content)
+                .commentCount(0)
+                .viewCount(0)
+                .likeCount(0)
+                .reportCount(0)
+                .isDeleted(false)
+                .isInactive(false)
                 .build();
     }
 

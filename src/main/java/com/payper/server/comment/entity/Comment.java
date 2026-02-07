@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -89,8 +88,8 @@ public class Comment extends BaseTimeEntity {
                 .user(user)
                 .parentComment(parentComment)
                 .content(content)
+                .likeCount(0)
                 .isDeleted(false)
-                .deletedAt(null)
                 .build();
     }
 
