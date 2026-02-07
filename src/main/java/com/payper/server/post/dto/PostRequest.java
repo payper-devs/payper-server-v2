@@ -13,7 +13,7 @@ public class PostRequest {
      */
     @Schema(description = "게시글 작성 요청")
     public record CreatePost(
-            @Schema(description = "게시글 타입", example = "BENEFIT")
+            @Schema(description = "게시글 타입 : BENEFIT|QUESTION|ETC ", example = "BENEFIT")
             @NotNull(message = "게시글의 타입을 선택해주세요.")
             PostType type,
 

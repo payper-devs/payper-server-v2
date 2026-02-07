@@ -17,7 +17,7 @@ public class PostResponse {
             Long id,
             @Schema(description = "작성자 이름", example = "홍길동")
             String authorName,
-            @Schema(description = "가맹점명", example = "스타벅스 강남점")
+            @Schema(description = "가맹점명", example = "스타벅스")
             String merchantName,
             @Schema(description = "게시글 타입", example = "BENEFIT")
             PostType type,
@@ -62,7 +62,7 @@ public class PostResponse {
             Long id,
             @Schema(description = "작성자 이름", example = "홍길동")
             String authorName,
-            @Schema(description = "가맹점명", example = "스타벅스 강남점")
+            @Schema(description = "가맹점명", example = "스타벅스")
             String merchantName,
             @Schema(description = "게시글 타입", example = "BENEFIT")
             PostType type,
