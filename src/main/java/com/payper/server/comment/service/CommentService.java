@@ -85,7 +85,7 @@ public class CommentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
         // 댓글 수정 권한 조회
-        if(!userId.equals(comment.getUser().getId())) {
+        if(!comment.isAuthor(userId)) {
             throw new ApiException(ErrorCode.NOT_COMMENT_AUTHOR);
         }
 
@@ -105,7 +105,7 @@ public class CommentService {
                 .orElseThrow(() -> new ApiException(ErrorCode.COMMENT_NOT_FOUND));
 
         // 댓글 삭제 권한 조회
-        if(!userId.equals(comment.getUser().getId())) {
+        if(!comment.isAuthor(userId)) {
             throw new ApiException(ErrorCode.NOT_COMMENT_AUTHOR);
         }
 
@@ -162,6 +162,9 @@ public class CommentService {
         return CommentResponse.CommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
+    /**
+     * 자식 댓글 조회
+     */
     @Transactional(readOnly = true)
     public CommentResponse.CommentList getReplies(Long parentId, Long cursorId, int size) {
 

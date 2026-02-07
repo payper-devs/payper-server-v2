@@ -99,4 +99,11 @@ public class Comment extends BaseTimeEntity {
     public void update(String content) {
         this.content = content;
     }
+
+    /**
+     * 댓글 작성자인지 판단
+     */
+    public boolean isAuthor(Long userId) {
+        return this.user.getId().equals(userId);
+    }
 }

@@ -60,7 +60,7 @@ public class PostService {
                 .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 수정 권한 조회
-        if(!userId.equals(post.getAuthor().getId())) {
+        if(!post.isAuthor(userId)) {
             throw new ApiException(ErrorCode.NOT_POST_AUTHOR);
         }
 
@@ -76,16 +76,16 @@ public class PostService {
     @Transactional
     public void deletePost(Long userId, Long postId) {
         // 게시글 조회
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 삭제 권한 조회
-        if(!userId.equals(post.getAuthor().getId())) {
+        if(!post.isAuthor(userId)) {
             throw new ApiException(ErrorCode.NOT_POST_AUTHOR);
         }
 
         // 게시글 삭제
-        post.delete();
+        post.softDelete();
         log.info("게시글 삭제 완료 - postId: {}", post.getId());
 
         // 댓글 삭제 - 댓글 삭제에 실패해도 게시물 삭제는 진행되어야 하므로 try-catch로 묶음

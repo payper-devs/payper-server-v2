@@ -7,7 +7,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Getter
@@ -120,14 +119,13 @@ public class Post extends BaseTimeEntity {
      * 게시글 삭제
      * soft delete
      */
-    public void delete() {
+    public void softDelete() {
         if (this.isDeleted) { // 멱등성 고려 처리
             return;
         }
 
         this.isDeleted = true;
         this.deletedAt = LocalDateTime.now();
-        this.commentCount = 0;
     }
 
     /**
@@ -164,6 +162,13 @@ public class Post extends BaseTimeEntity {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    /**
+     * 게시글 작성자인지 판단
+     */
+    public boolean isAuthor(Long authorId) {
+        return this.author.getId().equals(authorId);
     }
 
     /**
