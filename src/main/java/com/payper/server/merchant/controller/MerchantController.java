@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/merchants")
 @RequiredArgsConstructor
-public class MerchantController {
+public class MerchantController implements MerchantApi {
     private final PostService postService;
 
     /**
