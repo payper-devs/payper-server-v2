@@ -65,6 +65,36 @@ public class AuthService {
         );
     }
 
+    public User findOrEnrollOAuthAdminUser(OAuthUserInfo oauthUserInfo) {
+        //먼저 검증
+        Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
+
+        user.ifPresent(
+                u->{
+                    log.info("가입 유저 확인 - userId: {}, userName: {}, userRole: {}", u.getId(),u.getName(),u.getUserRole().name());
+                }
+        );
+
+        return user.orElseGet(
+                () -> {
+                    User savedUser = userService.save(
+                            User.create(
+                                    AuthType.KAKAO,
+                                    oauthUserInfo.getName(),
+                                    oauthUserInfo.getOauthId(),
+                                    UserRole.ADMIN,
+                                    true
+                            )
+                    );
+
+                    log.info("유저 가입 & 저장 - userId: {}, userName: {}, userRole: {}",
+                            savedUser.getId(),savedUser.getName(),savedUser.getUserRole().name());
+
+                    return savedUser;
+                }
+        );
+    }
+
     public OAuthUserInfo findOAuthUserInfo(String oauthToken, AuthType authType) {
         return switch (authType) {
             case AuthType.KAKAO -> kakaoOAuthUtil.getUserInfoFromOAuthToken(oauthToken);

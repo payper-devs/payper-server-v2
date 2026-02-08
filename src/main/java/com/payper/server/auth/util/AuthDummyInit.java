@@ -43,18 +43,26 @@ public class AuthDummyInit implements ApplicationRunner {
                 "7777",
                 AuthType.KAKAO
         );
+        OAuthUserInfo adminDummyOAuth1=new OAuthUserInfo(
+                "관리자",
+                "2222",
+                AuthType.KAKAO
+        );
 
         User dummyUser1 = authService.findOrEnrollOAuthUser(dummyOAuth1);
         User dummyUser2 = authService.findOrEnrollOAuthUser(dummyOAuth2);
         User dummyUser3 = authService.findOrEnrollOAuthUser(dummyOAuth3);
+        User dummyUser4 = authService.findOrEnrollOAuthAdminUser(adminDummyOAuth1);
 
         String accessToken1 = authService.enrollNewAuthTokens(dummyUser1, null);
         String accessToken2 = authService.enrollNewAuthTokens(dummyUser2, null);
         String accessToken3 = authService.enrollNewAuthTokens(dummyUser3, null);
+        String accessToken4 = authService.enrollNewAuthTokens(dummyUser4, null);
 
         log.info("du1: name = {}, at = {}",dummyUser1.getName(),accessToken1);
         log.info("du2: name = {}, at = {}",dummyUser2.getName(),accessToken2);
         log.info("du3: name = {}, at = {}",dummyUser3.getName(),accessToken3);
+        log.info("admin du1: name = {}, at = {}",dummyUser4.getName(),accessToken4);
     }
 
 
