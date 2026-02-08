@@ -1,13 +1,12 @@
 package com.payper.server.merchant.entity;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Merchant {
@@ -19,7 +18,7 @@ public class Merchant {
     /**
      * 가맹점명
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     /**
@@ -35,4 +34,26 @@ public class Merchant {
      */
     @Column(name = "image_url")
     private String imageUrl;
+
+    /**
+     * 가맹점 등록
+     */
+    public static Merchant register(String name, Category category, String imageUrl) {
+        return Merchant.builder()
+                .name(name)
+                .category(category)
+                .imageUrl(imageUrl)
+                .build();
+    }
+
+    /**
+     * 가맹점 수정
+     */
+    public void update(String name, @Nullable String imageUrl) {
+        this.name = name;
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        }
+
+    }
 }
