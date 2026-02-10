@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/posts")
 @RequiredArgsConstructor
-public class PostController {
+public class PostController implements PostApi {
     private final PostService postService;
     private final CommentService commentService;
 
@@ -61,7 +61,9 @@ public class PostController {
      * 삭제되지 않은 글만 조회함
      */
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostResponse.PostDetail>> getPostDetail(@PathVariable Long postId) {
+    public ResponseEntity<ApiResponse<PostResponse.PostDetail>> getPostDetail(
+            @PathVariable Long postId
+    ) {
         PostResponse.PostDetail response = postService.getPostDetail(postId);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }

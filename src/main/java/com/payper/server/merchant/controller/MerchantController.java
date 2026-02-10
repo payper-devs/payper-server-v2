@@ -20,7 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/merchants")
 @RequiredArgsConstructor
-public class MerchantController {
+public class MerchantController implements MerchantApi {
     private final MerchantService merchantService;
     private final PostService postService;
 

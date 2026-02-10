@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/comments")
 @RequiredArgsConstructor
-public class CommentController {
+public class CommentController implements CommentApi {
     private final CommentService commentService;
 
     /**
@@ -48,9 +48,9 @@ public class CommentController {
 
     /**
      * 내가 쓴 댓글 조회
-     * 
+     *
      * 무한 스크롤 방식
-     * 
+     *
      * 정렬: 최신 순
      */
     @GetMapping("/me")
