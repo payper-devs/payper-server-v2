@@ -52,7 +52,8 @@ public class SecurityConfig {
                 requestMatcher.matcher("/auth/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/api/v1/posts/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/api/v1/comments/*/replies"),
-                requestMatcher.matcher(HttpMethod.GET, "/api/v1/merchants/**")
+                requestMatcher.matcher(HttpMethod.GET, "/api/v1/merchants/**"),
+                requestMatcher.matcher(HttpMethod.GET, "/api/v1/categories/**")
         );
         // 인증이 필요한 요청
         authenticatedRequestMatcher = new OrRequestMatcher(
@@ -75,7 +76,9 @@ public class SecurityConfig {
         adminRequestMatcher = new OrRequestMatcher(
                 requestMatcher.matcher(HttpMethod.GET, "/admin/**"),
                 requestMatcher.matcher(HttpMethod.POST, "/api/v1/merchants"),
-                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/merchants/**")
+                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/merchants/**"),
+                requestMatcher.matcher(HttpMethod.POST, "/api/v1/categories"),
+                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/categories")
         );
     }
 

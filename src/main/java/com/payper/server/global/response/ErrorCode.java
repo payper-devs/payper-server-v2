@@ -52,7 +52,10 @@ public enum ErrorCode {
     MERCHANT_ALREADY_EXISTS("MERCHANT-002", HttpStatus.CONFLICT, "Merchant Already Exists"),
 
     // CATEGORY
-    CATEGORY_NOT_FOUND("CATEGORY-001", HttpStatus.NOT_FOUND, "Category Not Found")
+    CATEGORY_NOT_FOUND("CATEGORY-001", HttpStatus.NOT_FOUND, "Category Not Found"),
+    CATEGORY_ALREADY_EXISTS("CATEGORY-002", HttpStatus.CONFLICT, "Category Already Exists"),
+    CATEGORY_DEPTH_EXCEEDED("CATEGORY-003", HttpStatus.BAD_REQUEST, "Category Depth Exceeded"),
+    CATEGORY_CANNOT_BE_SELF_PARENT("CATEGORY-004", HttpStatus.BAD_REQUEST, "Category Cannot Be Self Parent"),
 
     ;
 

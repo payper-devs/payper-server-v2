@@ -54,6 +54,5 @@ public class Merchant {
         if (imageUrl != null) {
             this.imageUrl = imageUrl;
         }
-
     }
 }
