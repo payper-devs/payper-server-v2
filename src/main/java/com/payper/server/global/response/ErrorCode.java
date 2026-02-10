@@ -56,6 +56,7 @@ public enum ErrorCode {
     CATEGORY_ALREADY_EXISTS("CATEGORY-002", HttpStatus.CONFLICT, "Category Already Exists"),
     CATEGORY_DEPTH_EXCEEDED("CATEGORY-003", HttpStatus.BAD_REQUEST, "Category Depth Exceeded"),
     CATEGORY_CANNOT_BE_SELF_PARENT("CATEGORY-004", HttpStatus.BAD_REQUEST, "Category Cannot Be Self Parent"),
+    PARENT_CATEGORY_CANNOT_HAVE_PARENT("CATEGORY-005", HttpStatus.BAD_REQUEST, "Parent Category Cannot Be Changed To A Child"),
 
     ;
 

@@ -75,27 +75,41 @@ public class CategoryService {
             throw new ApiException(ErrorCode.CATEGORY_ALREADY_EXISTS);
         }
 
-        Category newParentCategory = null;
-        if (request.parentCategoryId() != null) {
-            // 변경하고 싶은 부모 카테고리가 존재하는 카테고리인지 확인
-            newParentCategory = categoryRepository.findById(request.parentCategoryId())
-                    .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
+        boolean isParentCategory = category.isRoot();
 
-            // 자기 자신 불가
-            if (newParentCategory.getId().equals(categoryId)) {
-                throw new ApiException(ErrorCode.CATEGORY_CANNOT_BE_SELF_PARENT);
+        // 부모 카테고리인 경우
+        if (isParentCategory) {
+            // 부모는 자식이 될 수 없음
+            if (request.parentCategoryId() != null) {
+                throw new ApiException(ErrorCode.PARENT_CATEGORY_CANNOT_HAVE_PARENT);
             }
 
-            // 부모는 반드시 root여야 함
-            if (newParentCategory.isDepth2()) {
-                throw new ApiException(ErrorCode.CATEGORY_DEPTH_EXCEEDED);
-            }
+            category.updateName(request.name());
+            return;
         }
 
-        // 카테고리 수정
-        category.update(request.name(), newParentCategory);
+        // 자식 카테고리인 경우 1. 이름만 바꾸는 경우
+        if (request.parentCategoryId() == null) {
+            category.updateName(request.name());
+            return;
+        }
 
-        log.info("카테고리 수정 완료 - categoryId: {}", category.getId());
+        // 자식 카테고리인 경우 2. 이름, 부모 모두 바꾸는 경우
+        // 변경하고 싶은 부모 카테고리가 존재하는 카테고리인지 확인
+        Category newParentCategory = categoryRepository.findById(request.parentCategoryId())
+                .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
+
+        // 자기 자신 불가
+        if (newParentCategory.getId().equals(categoryId)) {
+            throw new ApiException(ErrorCode.CATEGORY_CANNOT_BE_SELF_PARENT);
+        }
+
+        // 부모는 반드시 root여야 함
+        if (newParentCategory.isDepth2()) {
+            throw new ApiException(ErrorCode.CATEGORY_DEPTH_EXCEEDED);
+        }
+
+        category.updateNameAndParentCategory(request.name(), newParentCategory);
     }
 
     /**
@@ -103,11 +117,15 @@ public class CategoryService {
      */
     @Transactional(readOnly = true)
     public List<CategoryResponse.CategoryItem> getCategories(Long parentCategoryId) {
-        if (parentCategoryId != null && !categoryRepository.existsById(parentCategoryId)) {
-            throw new ApiException(ErrorCode.CATEGORY_NOT_FOUND);
+        List<Category> categories;
+        if (parentCategoryId == null) {
+            categories = categoryRepository.findByParentCategoryIsNullOrderByNameAsc();
+        } else {
+            if (!categoryRepository.existsByIdAndParentCategoryIsNull(parentCategoryId)) {
+                throw new ApiException(ErrorCode.CATEGORY_NOT_FOUND);
+            }
+            categories = categoryRepository.findByParentCategoryIdOrderByNameAsc(parentCategoryId);
         }
-
-        List<Category> categories = categoryRepository.findByParentCategoryId(parentCategoryId);
 
         return categories.stream()
                 .map(CategoryResponse.CategoryItem::from)

@@ -34,9 +34,10 @@ public class CategoryController {
     }
 
     /**
-     * 카테고리 수정
+     * 카테고리 수정 (depth는 수정할 수 없음)
      * 관리자만 수정 가능
-     * 부모 카테고리 변경 가능
+     * 부모 카테고리 -> 이름만 변경 가능
+     * 자식 카테고리 -> 이름, 부모 변경 가능
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{categoryId}")
@@ -53,6 +54,7 @@ public class CategoryController {
      *
      * 필터링 조건
      * 부모 카테고리
+     * 파라미터 안 넣으면 부모 카테고리만 보임
      *
      * 정렬 조건
      * 카테고리명, 오름차순

@@ -78,7 +78,7 @@ public class SecurityConfig {
                 requestMatcher.matcher(HttpMethod.POST, "/api/v1/merchants"),
                 requestMatcher.matcher(HttpMethod.PUT, "/api/v1/merchants/**"),
                 requestMatcher.matcher(HttpMethod.POST, "/api/v1/categories"),
-                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/categories")
+                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/categories/**")
         );
     }
 

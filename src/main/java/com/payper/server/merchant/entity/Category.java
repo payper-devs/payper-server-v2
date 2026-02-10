@@ -1,6 +1,5 @@
 package com.payper.server.merchant.entity;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -53,10 +52,17 @@ public class Category {
     }
 
     /**
-     * 카테고리 수정
+     * 이름 AND 부모 변경
      */
-    public void update(String name, @Nullable Category parentCategory) {
+    public void updateNameAndParentCategory(String name, Category parentCategory) {
         this.name = name;
         this.parentCategory = parentCategory;
+    }
+
+    /**
+     * 이름 변경
+     */
+    public void updateName(String name) {
+        this.name = name;
     }
 }
