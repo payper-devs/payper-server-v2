@@ -35,7 +35,7 @@ public class AuthService {
     private final JwtRefreshTokenUtil jwtRefreshTokenUtil;
     private final JwtParseUtil jwtParseUtil;
 
-    public User findOrEnrollOAuthUser(OAuthUserInfo oauthUserInfo) {
+    private User findOrEnrollUser(OAuthUserInfo oauthUserInfo, UserRole userRole) {
         //먼저 검증
         Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
 
@@ -52,7 +52,7 @@ public class AuthService {
                                     AuthType.KAKAO,
                                     oauthUserInfo.getName(),
                                     oauthUserInfo.getOauthId(),
-                                    UserRole.USER,
+                                    userRole, // 매개변수 사용
                                     true
                             )
                     );
@@ -65,34 +65,12 @@ public class AuthService {
         );
     }
 
+    public User findOrEnrollOAuthUser(OAuthUserInfo oauthUserInfo) {
+        return findOrEnrollUser(oauthUserInfo, UserRole.USER);
+    }
+
     public User findOrEnrollOAuthAdminUser(OAuthUserInfo oauthUserInfo) {
-        //먼저 검증
-        Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
-
-        user.ifPresent(
-                u->{
-                    log.info("가입 유저 확인 - userId: {}, userName: {}, userRole: {}", u.getId(),u.getName(),u.getUserRole().name());
-                }
-        );
-
-        return user.orElseGet(
-                () -> {
-                    User savedUser = userService.save(
-                            User.create(
-                                    AuthType.KAKAO,
-                                    oauthUserInfo.getName(),
-                                    oauthUserInfo.getOauthId(),
-                                    UserRole.ADMIN,
-                                    true
-                            )
-                    );
-
-                    log.info("유저 가입 & 저장 - userId: {}, userName: {}, userRole: {}",
-                            savedUser.getId(),savedUser.getName(),savedUser.getUserRole().name());
-
-                    return savedUser;
-                }
-        );
+        return findOrEnrollUser(oauthUserInfo, UserRole.ADMIN);
     }
 
     public OAuthUserInfo findOAuthUserInfo(String oauthToken, AuthType authType) {
