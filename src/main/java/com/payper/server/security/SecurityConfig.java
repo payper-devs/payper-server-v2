@@ -50,7 +50,8 @@ public class SecurityConfig {
                 requestMatcher.matcher(HttpMethod.GET, "/favicon.ico"),
                 requestMatcher.matcher("/auth/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/api/v1/posts/**"),
-                requestMatcher.matcher(HttpMethod.GET, "/api/v1/comments/*/replies")
+                requestMatcher.matcher(HttpMethod.GET, "/api/v1/comments/*/replies"),
+                requestMatcher.matcher("/actuator/**")
         );
         // 인증이 필요한 요청
         authenticatedRequestMatcher = new OrRequestMatcher(

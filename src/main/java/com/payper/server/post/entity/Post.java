@@ -14,7 +14,16 @@ import java.time.ZoneId;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@Table(name = "posts")
+@Table(name = "posts", indexes = {
+        @Index(name = "idx_posts_deleted_type_created", columnList = "is_deleted, type, created_at"),
+        @Index(name = "idx_posts_deleted_type_likecnt", columnList = "is_deleted, type, like_count"),
+        @Index(name = "idx_posts_deleted_type_viewcnt", columnList = "is_deleted, type, view_count"),
+        @Index(name = "idx_posts_deleted_type_commentcnt", columnList = "is_deleted, type, comment_count"),
+        @Index(name = "idx_posts_deleted_merchant_created", columnList = "is_deleted, merchant_id, created_at"),
+        @Index(name = "idx_posts_deleted_merchant_likecnt", columnList = "is_deleted, merchant_id, like_count"),
+        @Index(name = "idx_posts_deleted_merchant_viewcnt", columnList = "is_deleted, merchant_id, view_count"),
+        @Index(name = "idx_posts_deleted_merchant_commentcnt", columnList = "is_deleted, merchant_id, comment_count")
+})
 public class Post extends BaseTimeEntity {
 
     @Id

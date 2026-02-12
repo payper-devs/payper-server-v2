@@ -1,14 +1,14 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/payper_v2?useSSL=false&serverTimezone=Asia/Seoul
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    url: jdbc:p6spy:mysql://localhost:3306/payper_v2?useSSL=false&serverTimezone=Asia/Seoul
     username: root
     password: 1234
 
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
 
 jwt:
   secret-key: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ABCD"
@@ -17,3 +17,21 @@ jwt:
     exptime: 1d
   access-token:
     exptime: 8h
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+logging:
+  level:
+    com.payper.server: debug
+
+server:
+  tomcat:
+    mbeanregistry:
+      enabled: true

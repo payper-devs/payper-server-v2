@@ -113,9 +113,8 @@ public class PostService {
      */
     @Transactional(readOnly = true)
     public Page<PostResponse.PostList> getPosts(Long merchantId, PostType type, Pageable pageable) {
-        Page<Post> posts = postRepository.findActivePostsByCondition(merchantId, type, pageable);
-
+        Page<PostResponse.PostList> posts = postRepository.findPostsWithDeferredJoin(merchantId, type, pageable);
         log.info("post 조회 완료 {}", posts);
-        return posts.map(PostResponse.PostList::from);
+        return posts;
     }
 }
