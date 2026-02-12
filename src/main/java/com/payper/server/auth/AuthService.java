@@ -35,7 +35,7 @@ public class AuthService {
     private final JwtRefreshTokenUtil jwtRefreshTokenUtil;
     private final JwtParseUtil jwtParseUtil;
 
-    public User findOrEnrollOAuthUser(OAuthUserInfo oauthUserInfo) {
+    private User findOrEnrollUser(OAuthUserInfo oauthUserInfo, UserRole userRole) {
         //먼저 검증
         Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
 
@@ -52,7 +52,7 @@ public class AuthService {
                                     AuthType.KAKAO,
                                     oauthUserInfo.getName(),
                                     oauthUserInfo.getOauthId(),
-                                    UserRole.USER,
+                                    userRole, // 매개변수 사용
                                     true
                             )
                     );
@@ -63,6 +63,14 @@ public class AuthService {
                     return savedUser;
                 }
         );
+    }
+
+    public User findOrEnrollOAuthUser(OAuthUserInfo oauthUserInfo) {
+        return findOrEnrollUser(oauthUserInfo, UserRole.USER);
+    }
+
+    public User findOrEnrollOAuthAdminUser(OAuthUserInfo oauthUserInfo) {
+        return findOrEnrollUser(oauthUserInfo, UserRole.ADMIN);
     }
 
     public OAuthUserInfo findOAuthUserInfo(String oauthToken, AuthType authType) {
