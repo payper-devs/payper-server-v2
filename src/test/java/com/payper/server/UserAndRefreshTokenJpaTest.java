@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 @DataJpaTest
 @Transactional
 @ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // <-- MySQL 그대로 사용
 class UserAndRefreshTokenJpaTest {
 
     @Autowired

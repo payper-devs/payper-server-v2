@@ -1,9 +1,7 @@
 spring:
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/payper_v2_test?useSSL=false&serverTimezone=Asia/Seoul
-    username: root
-    password: 1234
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
 
   jpa:
     hibernate:
