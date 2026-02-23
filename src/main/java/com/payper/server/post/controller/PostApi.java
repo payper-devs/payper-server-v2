@@ -50,7 +50,10 @@ public interface PostApi {
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0") int page,
             @Parameter(description = "페이지 크기", example = "10") int size);
 
-    @Operation(summary = "댓글 작성", description = "게시글에 댓글을 작성합니다. 대댓글은 parentCommentId를 지정합니다. 부모 댓글이 삭제되어도 대댓글 작성 허용 삭제 또는 비활성화된 post에는 댓글 작성 불가")
+    @Operation(
+            summary = "댓글 작성",
+            description =
+                    "게시글에 댓글을 작성합니다. 대댓글은 parentCommentId를 지정합니다. 부모 댓글이 삭제되어도 대댓글 작성 허용 삭제 또는 비활성화된 post에는 댓글 작성 불가")
     @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<ApiResponse<Long>> createComment(
             CustomUserDetails user,

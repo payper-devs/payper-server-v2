@@ -134,7 +134,7 @@ class UserAndRefreshTokenJpaTest {
         // then
         assertThat(deleted).isEqualTo(1);
         assertThat(refreshTokenRepository.findByHashedRefreshToken("hashed-del-1"))
-                .isNull();
+                .isEmpty();
     }
 
     @Test
