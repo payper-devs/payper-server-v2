@@ -17,10 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController implements CommentApi {
     private final CommentService commentService;
 
-    /**
-     * 댓글 수정
-     * 작성자만 수정 가능
-     */
+    /** 댓글 수정 */
     @PutMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> updateComment(
             @AuthenticationPrincipal CustomUserDetails user,
@@ -30,12 +27,7 @@ public class CommentController implements CommentApi {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    /**
-     * 댓글 삭제
-     * 작성자만 삭제 가능
-     *
-     * 자식 댓글은 삭제하지 않음
-     */
+    /** 댓글 삭제 */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
             @AuthenticationPrincipal CustomUserDetails user, @PathVariable Long commentId) {
@@ -44,13 +36,7 @@ public class CommentController implements CommentApi {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    /**
-     * 내가 쓴 댓글 조회
-     *
-     * 무한 스크롤 방식
-     *
-     * 정렬: 최신 순
-     */
+    /** 내가 쓴 댓글 조회 */
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<CommentResponse.MyCommentList>> getMyComments(
             @AuthenticationPrincipal CustomUserDetails user,
@@ -60,9 +46,7 @@ public class CommentController implements CommentApi {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
-    /**
-     * 자식 댓글 조회
-     */
+    /** 자식 댓글 조회 */
     @GetMapping("/{parentId}/replies")
     public ResponseEntity<ApiResponse<CommentResponse.CommentList>> getReplies(
             @PathVariable Long parentId,

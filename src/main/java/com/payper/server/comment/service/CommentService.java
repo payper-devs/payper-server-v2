@@ -30,9 +30,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    /**
-     * 댓글 작성
-     */
+    /** 댓글 작성 */
     @Transactional
     public Long createComment(Long userId, Long postId, CommentRequest.CreateComment request) {
         // 사용자 조회
@@ -72,9 +70,7 @@ public class CommentService {
         return parentComment;
     }
 
-    /**
-     * 댓글 수정
-     */
+    /** 댓글 수정 */
     @Transactional
     public void updateComment(Long userId, Long commentId, CommentRequest.UpdateComment request) {
         // 댓글 조회
@@ -93,9 +89,7 @@ public class CommentService {
         log.info("댓글 수정 완료 - commentId: {}", comment.getId());
     }
 
-    /**
-     * 댓글 삭제
-     */
+    /** 댓글 삭제 */
     @Transactional
     public void deleteComment(Long userId, Long commentId) {
         // 댓글 조회
@@ -110,9 +104,7 @@ public class CommentService {
         comment.delete();
     }
 
-    /**
-     * 내가 작성한 댓글 조회
-     */
+    /** 내가 작성한 댓글 조회 */
     @Transactional(readOnly = true)
     public CommentResponse.MyCommentList getMyComments(Long userId, Long cursorId, int size) {
         Pageable pageable = PageRequest.of(0, size);
@@ -135,9 +127,7 @@ public class CommentService {
         return CommentResponse.MyCommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
-    /**
-     * 게시글 댓글 조회
-     */
+    /** 게시글 댓글 조회 */
     @Transactional(readOnly = true)
     public CommentResponse.CommentList getPostComments(Long postId, Long cursorId, int size) {
 
@@ -166,9 +156,7 @@ public class CommentService {
         return CommentResponse.CommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
-    /**
-     * 자식 댓글 조회
-     */
+    /** 자식 댓글 조회 */
     @Transactional(readOnly = true)
     public CommentResponse.CommentList getReplies(Long parentId, Long cursorId, int size) {
 
@@ -197,9 +185,7 @@ public class CommentService {
         return CommentResponse.CommentList.from(comments.getContent(), nextCursor, comments.hasNext());
     }
 
-    /**
-     * 게시글 삭제 시 댓글 삭제(soft delete)
-     */
+    /** 게시글 삭제 시 댓글 삭제(soft delete) */
     @Transactional(propagation = REQUIRES_NEW)
     public void softDeleteByPostId(Long postId) {
         long deletedCount = commentRepository.softDeleteByPostId(postId, LocalDateTime.now());

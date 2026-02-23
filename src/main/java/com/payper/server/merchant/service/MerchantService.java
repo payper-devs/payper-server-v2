@@ -23,9 +23,7 @@ public class MerchantService {
     private final MerchantRepository merchantRepository;
     private final CategoryRepository categoryRepository;
 
-    /**
-     * 가맹점 등록
-     */
+    /** 가맹점 등록 */
     @Transactional
     public Long registerMerchant(MerchantRequest.RegisterMerchant request) {
         // 카테고리 조회
@@ -50,9 +48,7 @@ public class MerchantService {
         return merchant.getId();
     }
 
-    /**
-     * 가맹점 수정
-     */
+    /** 가맹점 수정 */
     @Transactional
     public void updateMerchant(Long merchantId, MerchantRequest.UpdateMerchant request) {
         // 가맹점 조회
@@ -71,9 +67,7 @@ public class MerchantService {
         log.info("가맹점 수정 완료 - merchantId: {}", merchant.getId());
     }
 
-    /**
-     * 가맹점 리스트 조회
-     */
+    /** 가맹점 리스트 조회 */
     @Transactional(readOnly = true)
     public List<MerchantResponse.MerchantItem> getMerchants(Long categoryId) {
         if (categoryId != null && !categoryRepository.existsById(categoryId)) {

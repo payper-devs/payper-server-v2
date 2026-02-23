@@ -23,12 +23,7 @@ public class MerchantController implements MerchantApi {
     private final MerchantService merchantService;
     private final PostService postService;
 
-    /**
-     * 가맹점 등록
-     *
-     * 관리자만 등록 가능
-     * 카테고리 리스트에서 카테고리를 선택해서 해당 카테고리의 id를 넘겨 받음
-     */
+    /** 가맹점 등록 */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public ResponseEntity<ApiResponse<Long>> registerMerchant(
@@ -37,10 +32,7 @@ public class MerchantController implements MerchantApi {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(merchantId));
     }
 
-    /**
-     * 가맹점 수정
-     * 관리자만 수정 가능
-     */
+    /** 가맹점 수정 */
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{merchantId}")
     public ResponseEntity<ApiResponse<Void>> updateMerchant(
@@ -49,15 +41,7 @@ public class MerchantController implements MerchantApi {
         return ResponseEntity.ok(ApiResponse.ok());
     }
 
-    /**
-     * 가맹점 조회
-     *
-     * 필터링 조건
-     * 카테고리
-     *
-     * 정렬 조건
-     * 가맹점명, 오름차순
-     */
+    /** 가맹점 조회 */
     @GetMapping()
     public ResponseEntity<ApiResponse<List<MerchantResponse.MerchantItem>>> getMerchants(
             @RequestParam(required = false) Long categoryId) {
@@ -65,14 +49,7 @@ public class MerchantController implements MerchantApi {
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
 
-    /**
-     * 게시글 작성
-     * 가맹점에 대해 글을 작성함
-     * 가맹점 리스트에서 가맹점을 선택해서 해당 가맹점의 id를 넘겨 받음
-     * TODO 가맹점이 없을 때는 어떻게 해야할까?
-     *
-     * 가입된 사용자만 글을 작성할 수 있음
-     */
+    /** 게시글 작성 TODO 가맹점이 없을 때는 어떻게 해야할까? */
     @PostMapping("/{merchantId}/posts")
     public ResponseEntity<ApiResponse<Long>> createPost(
             @AuthenticationPrincipal CustomUserDetails user,

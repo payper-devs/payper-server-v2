@@ -21,16 +21,12 @@ public class CommentLike {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 댓글
-     */
+    /** 댓글 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
-    /**
-     * 유저
-     */
+    /** 유저 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

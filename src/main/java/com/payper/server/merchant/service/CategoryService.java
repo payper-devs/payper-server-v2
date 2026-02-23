@@ -20,9 +20,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    /**
-     * 카테고리 등록
-     */
+    /** 카테고리 등록 */
     @Transactional
     public Long registerCategory(CategoryRequest.RegisterCategory request) {
         // 존재하는 카테고리명인지 체크
@@ -61,9 +59,7 @@ public class CategoryService {
         return parentCategory;
     }
 
-    /**
-     * 카테고리 수정
-     */
+    /** 카테고리 수정 */
     @Transactional
     public void updateCategory(Long categoryId, CategoryRequest.UpdateCategory request) {
         // 카테고리 조회
@@ -114,9 +110,7 @@ public class CategoryService {
         category.updateNameAndParentCategory(request.name(), newParentCategory);
     }
 
-    /**
-     * 카테고리 리스트 조회
-     */
+    /** 카테고리 리스트 조회 */
     @Transactional(readOnly = true)
     public List<CategoryResponse.CategoryItem> getCategories(Long parentCategoryId) {
         List<Category> categories;

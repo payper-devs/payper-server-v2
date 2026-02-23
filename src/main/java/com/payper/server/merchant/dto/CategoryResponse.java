@@ -4,9 +4,7 @@ import com.payper.server.merchant.entity.Category;
 
 public class CategoryResponse {
 
-    /**
-     * Category Item
-     */
+    /** Category Item */
     public record CategoryItem(Long id, String name, Long parentCategoryId) {
         public static CategoryResponse.CategoryItem from(Category category) {
             return new CategoryResponse.CategoryItem(

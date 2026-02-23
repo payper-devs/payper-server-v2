@@ -7,9 +7,7 @@ import java.time.LocalDateTime;
 
 public class PostResponse {
 
-    /**
-     * 게시글 단일 조회 DTO
-     */
+    /** 게시글 단일 조회 DTO */
     @Schema(description = "게시글 상세 응답")
     public record PostDetail(
             @Schema(description = "게시글 ID", example = "1") Long id,
@@ -46,9 +44,7 @@ public class PostResponse {
         }
     }
 
-    /**
-     * 게시글 리스트 조회 DTO
-     */
+    /** 게시글 리스트 조회 DTO */
     @Schema(description = "게시글 목록 항목")
     public record PostList(
             @Schema(description = "게시글 ID", example = "1") Long id,

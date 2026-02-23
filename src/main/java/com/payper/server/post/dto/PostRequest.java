@@ -8,9 +8,7 @@ import jakarta.validation.constraints.Size;
 
 public class PostRequest {
 
-    /**
-     * 게시글 작성 DTO
-     */
+    /** 게시글 작성 DTO */
     @Schema(description = "게시글 작성 요청")
     public record CreatePost(
             @Schema(description = "게시글 타입 : BENEFIT|QUESTION|ETC ", example = "BENEFIT")
@@ -25,9 +23,7 @@ public class PostRequest {
             @Size(max = 5500000, message = "내용은 500만자 이내로 적어주세요.")
             String content) {}
 
-    /**
-     * 게시글 수정 DTO
-     */
+    /** 게시글 수정 DTO */
     @Schema(description = "게시글 수정 요청")
     public record UpdatePost(
             @Schema(description = "수정할 제목", example = "수정된 제목입니다") @NotBlank(message = "제목을 적어주세요.")

@@ -29,9 +29,7 @@ public class PostService {
     private final MerchantRepository merchantRepository;
     private final CommentService commentService;
 
-    /**
-     * 게시글 작성
-     */
+    /** 게시글 작성 */
     @Transactional
     public Long createPost(Long userId, Long merchantId, PostRequest.CreatePost request) {
         // 사용자 조회
@@ -50,9 +48,7 @@ public class PostService {
         return post.getId();
     }
 
-    /**
-     * 게시글 수정
-     */
+    /** 게시글 수정 */
     @Transactional
     public void updatePost(Long userId, Long postId, PostRequest.UpdatePost request) {
         // 게시글 조회 및 삭제 여부 체크
@@ -71,9 +67,7 @@ public class PostService {
         log.info("게시글 수정 완료 - postId: {}", post.getId());
     }
 
-    /**
-     * 게시글 삭제
-     */
+    /** 게시글 삭제 */
     @Transactional
     public void deletePost(Long userId, Long postId) {
         // 게시글 조회
@@ -98,9 +92,7 @@ public class PostService {
         }
     }
 
-    /**
-     * 게시글 단일 조회
-     */
+    /** 게시글 단일 조회 */
     @Transactional(readOnly = true)
     public PostResponse.PostDetail getPostDetail(Long postId) {
         // 게시글 조회
@@ -111,9 +103,7 @@ public class PostService {
         return PostResponse.PostDetail.from(post);
     }
 
-    /**
-     * 게시글 리스트 조회
-     */
+    /** 게시글 리스트 조회 */
     @Transactional(readOnly = true)
     public Page<PostResponse.PostList> getPosts(Long merchantId, PostType type, Pageable pageable) {
         Page<Post> posts = postRepository.findActivePostsByCondition(merchantId, type, pageable);

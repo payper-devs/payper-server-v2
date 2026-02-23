@@ -7,9 +7,7 @@ import jakarta.validation.constraints.Size;
 
 public class CommentRequest {
 
-    /**
-     * 댓글 작성 DTO
-     */
+    /** 댓글 작성 DTO */
     @Schema(description = "댓글 작성 요청")
     public record CreateComment(
             @Schema(description = "댓글 내용", example = "좋은 글이네요!")
@@ -20,9 +18,7 @@ public class CommentRequest {
             @Schema(description = "부모 댓글 ID (대댓글 작성 시)", example = "1", nullable = true) @Nullable
             Long parentCommentId) {}
 
-    /**
-     * 댓글 수정 DTO
-     */
+    /** 댓글 수정 DTO */
     @Schema(description = "댓글 수정 요청")
     public record UpdateComment(
             @Schema(description = "수정할 댓글 내용", example = "수정된 댓글입니다")

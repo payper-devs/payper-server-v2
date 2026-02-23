@@ -18,7 +18,7 @@ public interface CategoryApi {
     @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<ApiResponse<Long>> registerCategory(@RequestBody CategoryRequest.RegisterCategory request);
 
-    @Operation(summary = "카테고리 수정", description = "관리자만 수정 가능. 부모 카테고리는 이름만, 자식 카테고리는 이름과 부모 변경 가능.")
+    @Operation(summary = "카테고리 수정", description = "관리자만 수정 가능. 부모 카테고리는 이름만, 자식 카테고리는 이름과 부모 변경 가능. depth는 수정할 수 없음")
     @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<ApiResponse<Void>> updateCategory(
             @Parameter(description = "카테고리 ID", required = true, example = "1") Long categoryId,

@@ -19,55 +19,38 @@ public class Comment extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 게시글
-     */
+    /** 게시글 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    /**
-     * 댓글을 단 유저
-     */
+    /** 댓글을 단 유저 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    /**
-     * 부모 댓글
-     */
+    /** 부모 댓글 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
     private Comment parentComment;
 
-    /**
-     * 댓글 내용 (64KB, 대략 21,800자)
-     */
+    /** 댓글 내용 (64KB, 대략 21,800자) */
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    /**
-     * 좋아요 수 TODO: CommentLike 테이블 고려
-     */
+    /** 좋아요 수 TODO: CommentLike 테이블 고려 */
     @Column(name = "like_count", nullable = false)
     private long likeCount;
 
-    /**
-     * 삭제 여부
-     */
+    /** 삭제 여부 */
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
 
-    /**
-     * 삭제 시간
-     */
+    /** 삭제 시간 */
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
-    /**
-     * 댓글 삭제
-     * soft delete
-     */
+    /** 댓글 삭제 - soft delete */
     public void delete() {
         if (this.isDeleted) { // 멱등성 고려
             return;
@@ -78,9 +61,7 @@ public class Comment extends BaseTimeEntity {
         this.post.decreaseCommentCount();
     }
 
-    /**
-     * 댓글 생성
-     */
+    /** 댓글 생성 */
     public static Comment create(Post post, User user, Comment parentComment, String content) {
         return Comment.builder()
                 .post(post)
@@ -92,16 +73,12 @@ public class Comment extends BaseTimeEntity {
                 .build();
     }
 
-    /**
-     * 댓글 수정
-     */
+    /** 댓글 수정 */
     public void update(String content) {
         this.content = content;
     }
 
-    /**
-     * 댓글 작성자인지 판단
-     */
+    /** 댓글 작성자인지 판단 */
     public boolean isAuthor(Long userId) {
         return this.user.getId().equals(userId);
     }

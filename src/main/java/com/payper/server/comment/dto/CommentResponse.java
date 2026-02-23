@@ -7,9 +7,7 @@ import java.util.List;
 
 public class CommentResponse {
 
-    /**
-     * Post에 달린 Comment 리스트
-     */
+    /** Post에 달린 Comment 리스트 */
     @Schema(description = "댓글 목록 (커서 기반 페이지네이션)")
     public record CommentList(
             @Schema(description = "댓글 목록") List<CommentResponse.CommentItem> comments,
@@ -25,9 +23,7 @@ public class CommentResponse {
         }
     }
 
-    /**
-     * Comment Item
-     */
+    /** Comment Item */
     @Schema(description = "댓글 항목")
     public record CommentItem(
             @Schema(description = "댓글 ID", example = "1") Long id,
@@ -54,9 +50,7 @@ public class CommentResponse {
         }
     }
 
-    /**
-     * 내가 작성한 Comment 리스트
-     */
+    /** 내가 작성한 Comment 리스트 */
     @Schema(description = "내가 작성한 댓글 목록 (커서 기반 페이지네이션)")
     public record MyCommentList(
             @Schema(description = "댓글 목록") List<CommentResponse.MyCommentItem> comments,
@@ -72,9 +66,7 @@ public class CommentResponse {
         }
     }
 
-    /**
-     * 내가 작성한 Comment Item
-     */
+    /** 내가 작성한 Comment Item */
     @Schema(description = "내가 작성한 댓글 항목")
     public record MyCommentItem(
             @Schema(description = "댓글 ID", example = "1") Long id,
