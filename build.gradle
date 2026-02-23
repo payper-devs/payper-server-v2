@@ -75,3 +75,7 @@ tasks.register('updateGitHooks', Copy) {
 		file("${rootDir}/.git/hooks/pre-push").setExecutable(true)
 	}
 }
+
+tasks.named('check') {
+	dependsOn("spotlessCheck")
+}
