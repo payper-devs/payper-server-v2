@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.1'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'com.diffplug.spotless' version '8.2.0'
 }
 
 group = 'com.payper'
@@ -50,6 +51,12 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+spotless {
+	java {
+		target("**/*.java")
+		removeUnusedImports() // 불필요한 import 제거
+	}
 }
 
 tasks.named('test') {
