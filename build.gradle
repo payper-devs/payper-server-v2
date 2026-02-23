@@ -52,15 +52,26 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
+
 spotless {
 	java {
 		target("**/*.java")
-		palantirJavaFormat()
 		palantirJavaFormat().formatJavadoc(true) // 포맷 스타일
 		removeUnusedImports() // 불필요한 import 제거
+		trimTrailingWhitespace() // 명시: 불필요한 공백 제거
+		endWithNewline() // 명시: 파일 끝에 새로운 줄 추가
 	}
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.register('updateGitHooks', Copy) {
+	from("${rootDir}/scripts/pre-push")
+	into("${rootDir}/.git/hooks")
+
+	doLast {
+		file("${rootDir}/.git/hooks/pre-push").setExecutable(true)
+	}
 }
