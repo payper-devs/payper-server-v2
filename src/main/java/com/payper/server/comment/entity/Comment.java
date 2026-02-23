@@ -4,9 +4,8 @@ import com.payper.server.global.entity.BaseTimeEntity;
 import com.payper.server.post.entity.Post;
 import com.payper.server.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter

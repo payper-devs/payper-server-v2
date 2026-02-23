@@ -55,6 +55,7 @@ dependencies {
 spotless {
 	java {
 		target("**/*.java")
+		palantirJavaFormat()
 		removeUnusedImports() // 불필요한 import 제거
 	}
 }

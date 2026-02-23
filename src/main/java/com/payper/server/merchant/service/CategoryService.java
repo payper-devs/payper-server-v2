@@ -6,13 +6,12 @@ import com.payper.server.merchant.dto.CategoryRequest;
 import com.payper.server.merchant.dto.CategoryResponse;
 import com.payper.server.merchant.entity.Category;
 import com.payper.server.merchant.repository.CategoryRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -55,7 +54,8 @@ public class CategoryService {
     // 요청 body로 받은 parent category id 검증
     private Category getValidatedParentCategory(Long parentCategoryId) {
         // 부모 카테고리가 존재하는 카테고리인지 확인
-        Category parentCategory = categoryRepository.findById(parentCategoryId)
+        Category parentCategory = categoryRepository
+                .findById(parentCategoryId)
                 .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
 
         return parentCategory;
@@ -67,7 +67,8 @@ public class CategoryService {
     @Transactional
     public void updateCategory(Long categoryId, CategoryRequest.UpdateCategory request) {
         // 카테고리 조회
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository
+                .findById(categoryId)
                 .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 존재하는 카테고리명인지 체크 (나 제외)
@@ -96,7 +97,8 @@ public class CategoryService {
 
         // 자식 카테고리인 경우 2. 이름, 부모 모두 바꾸는 경우
         // 변경하고 싶은 부모 카테고리가 존재하는 카테고리인지 확인
-        Category newParentCategory = categoryRepository.findById(request.parentCategoryId())
+        Category newParentCategory = categoryRepository
+                .findById(request.parentCategoryId())
                 .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 자기 자신 불가
@@ -127,8 +129,6 @@ public class CategoryService {
             categories = categoryRepository.findByParentCategoryIdOrderByNameAsc(parentCategoryId);
         }
 
-        return categories.stream()
-                .map(CategoryResponse.CategoryItem::from)
-                .toList();
+        return categories.stream().map(CategoryResponse.CategoryItem::from).toList();
     }
 }

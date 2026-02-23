@@ -36,8 +36,7 @@ public class PostController implements PostApi {
     public ResponseEntity<ApiResponse<Void>> updatePost(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId,
-            @RequestBody @Valid PostRequest.UpdatePost request
-    ) {
+            @RequestBody @Valid PostRequest.UpdatePost request) {
         postService.updatePost(user.getId(), postId, request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
@@ -48,9 +47,7 @@ public class PostController implements PostApi {
      */
     @DeleteMapping("/{postId}")
     public ResponseEntity<ApiResponse<Void>> deletePost(
-            @AuthenticationPrincipal CustomUserDetails user,
-            @PathVariable Long postId
-    ) {
+            @AuthenticationPrincipal CustomUserDetails user, @PathVariable Long postId) {
         postService.deletePost(user.getId(), postId);
         return ResponseEntity.ok(ApiResponse.ok());
     }
@@ -61,9 +58,7 @@ public class PostController implements PostApi {
      * 삭제되지 않은 글만 조회함
      */
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse<PostResponse.PostDetail>> getPostDetail(
-            @PathVariable Long postId
-    ) {
+    public ResponseEntity<ApiResponse<PostResponse.PostDetail>> getPostDetail(@PathVariable Long postId) {
         PostResponse.PostDetail response = postService.getPostDetail(postId);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
@@ -86,8 +81,7 @@ public class PostController implements PostApi {
             @RequestParam(defaultValue = "POSTING_DATE") PostSortType sort,
             @RequestParam(defaultValue = "DESC") Sort.Direction direction,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-    ) {
+            @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size, sort.toSort(direction));
         Page<PostResponse.PostList> response = postService.getPosts(merchantId, type, pageable);
         return ResponseEntity.ok(ApiResponse.ok(response));
@@ -103,8 +97,7 @@ public class PostController implements PostApi {
     public ResponseEntity<ApiResponse<Long>> createComment(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long postId,
-            @RequestBody @Valid CommentRequest.CreateComment request
-    ) {
+            @RequestBody @Valid CommentRequest.CreateComment request) {
         Long commentId = commentService.createComment(user.getId(), postId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.created(commentId));
     }
@@ -119,8 +112,7 @@ public class PostController implements PostApi {
     public ResponseEntity<ApiResponse<CommentResponse.CommentList>> getPostComments(
             @PathVariable Long postId,
             @RequestParam(required = false) Long cursorId,
-            @RequestParam(defaultValue = "20") int size
-    ) {
+            @RequestParam(defaultValue = "20") int size) {
         CommentResponse.CommentList response = commentService.getPostComments(postId, cursorId, size);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }

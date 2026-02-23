@@ -45,10 +45,7 @@ public class Category {
      * 카테고리 등록
      */
     public static Category register(String name, Category parentCategory) {
-        return Category.builder()
-                .name(name)
-                .parentCategory(parentCategory)
-                .build();
+        return Category.builder().name(name).parentCategory(parentCategory).build();
     }
 
     /**

@@ -12,11 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "post_report",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_post_report_post_reporter",
-                columnNames = {"post_id", "reporter_id"}
-        )
-)
+        uniqueConstraints =
+                @UniqueConstraint(
+                        name = "uk_post_report_post_reporter",
+                        columnNames = {"post_id", "reporter_id"}))
 public class PostReport extends BaseTimeEntity {
 
     @Id

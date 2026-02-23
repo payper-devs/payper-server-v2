@@ -1,13 +1,17 @@
 package com.payper.server;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.payper.server.auth.AuthException;
 import com.payper.server.auth.jwt.RefreshTokenRepository;
-import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.entity.JwtType;
+import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.auth.jwt.util.JwtProperties;
 import com.payper.server.auth.jwt.util.JwtRefreshTokenUtil;
 import com.payper.server.auth.jwt.util.JwtTokenUtil;
+import java.util.Date;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,11 +30,13 @@ class JwtModulesSpringBootIntegrationTest {
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     JwtParseUtil jwtParseUtil;
 
     @Autowired
     JwtRefreshTokenUtil jwtRefreshTokenUtil;
+
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
 
@@ -114,8 +115,7 @@ class JwtModulesSpringBootIntegrationTest {
         String expired = jwtTokenUtil.generateJwtToken(JwtType.ACCESS, oldNow, userIdentifier);
 
         // when & then
-        assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(expired))
-                .isInstanceOf(AuthException.class);
+        assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(expired)).isInstanceOf(AuthException.class);
     }
 
     @Test
@@ -124,8 +124,7 @@ class JwtModulesSpringBootIntegrationTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer abc.def.ghi");
 
-        assertThat(jwtParseUtil.extractJwtTokenFromRequest(request))
-                .isEqualTo("abc.def.ghi");
+        assertThat(jwtParseUtil.extractJwtTokenFromRequest(request)).isEqualTo("abc.def.ghi");
     }
 
     /**
@@ -172,13 +171,12 @@ class JwtModulesSpringBootIntegrationTest {
 
         Optional<RefreshTokenEntity> found2 = jwtRefreshTokenUtil.getRefreshTokenEntity(raw2);
         assertThat(found2).isNotNull();
-        found2.ifPresent(
-                refreshTokenEntity -> assertThat(refreshTokenEntity.getUserIdentifier()
-                ).isEqualTo(userIdentifier));
+        found2.ifPresent(refreshTokenEntity ->
+                assertThat(refreshTokenEntity.getUserIdentifier()).isEqualTo(userIdentifier));
     }
 
     @Test
-    //@Transactional
+    // @Transactional
     @DisplayName("deleteAllRefreshTokenEntity는 사용자 토큰을 삭제하고, 이후 조회가 null이 된다")
     void refresh_deleteAll_deletesAndThenLookupNull() {
         String userIdentifier = "user-del";

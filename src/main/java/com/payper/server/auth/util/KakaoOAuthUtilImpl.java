@@ -23,7 +23,7 @@ public class KakaoOAuthUtilImpl implements OAuthUtil {
 
     @PostConstruct
     protected void init() {
-        kakaoRestClient=RestClient.builder()
+        kakaoRestClient = RestClient.builder()
                 .baseUrl("https://kapi.kakao.com")
                 .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
@@ -31,29 +31,24 @@ public class KakaoOAuthUtilImpl implements OAuthUtil {
 
     @Override
     public OAuthUserInfo getUserInfoFromOAuthToken(String oAuthToken) {
-        String body = kakaoRestClient.get()
+        String body = kakaoRestClient
+                .get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v2/user/me")
                         .queryParam("property_keys", PROPERTY_KEYS)
                         .build())
                 .headers(headers -> headers.setBearerAuth(oAuthToken))
                 .retrieve()
-                .onStatus(
-                        HttpStatusCode::isError,
-                        (request, response) ->
-                        {
-                            throw new ApiException(ErrorCode.OAUTH_RESOURCE_ERROR);
-                        }
-                )
+                .onStatus(HttpStatusCode::isError, (request, response) -> {
+                    throw new ApiException(ErrorCode.OAUTH_RESOURCE_ERROR);
+                })
                 .body(String.class);
 
         try {
             JsonNode json = objectMapper.readTree(body);
 
-            String name = json.path("kakao_account")
-                    .path("profile")
-                    .path("nickname")
-                    .asString();
+            String name =
+                    json.path("kakao_account").path("profile").path("nickname").asString();
 
             String kakaoId = json.path("id").asString();
 

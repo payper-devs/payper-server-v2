@@ -11,11 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "comment_like",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_comment_like_comment_user",
-                columnNames = {"comment_id", "user_id"}
-        )
-)
+        uniqueConstraints =
+                @UniqueConstraint(
+                        name = "uk_comment_like_comment_user",
+                        columnNames = {"comment_id", "user_id"}))
 public class CommentLike {
 
     @Id

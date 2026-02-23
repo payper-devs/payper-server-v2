@@ -3,14 +3,13 @@ package com.payper.server.auth.jwt.util;
 import com.payper.server.auth.jwt.entity.JwtType;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.UUID;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
@@ -22,18 +21,15 @@ public class JwtTokenUtil {
     @PostConstruct
     protected void init() {
         key = new SecretKeySpec(
-                jwtProperties.getSecretKey()
-                        .getBytes(StandardCharsets.UTF_8),
-                Jwts.SIG.HS512.key().build().getAlgorithm()
-        );
+                jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8),
+                Jwts.SIG.HS512.key().build().getAlgorithm());
     }
 
     public String generateJwtToken(JwtType jwtType, Date now, String userIdentifier) {
-        Date expDate = new Date(
-                now.getTime() +
-                        (jwtType == JwtType.REFRESH ?
-                                jwtProperties.getRefreshTokenTime() : jwtProperties.getAccessTokenTime())
-        );
+        Date expDate = new Date(now.getTime()
+                + (jwtType == JwtType.REFRESH
+                        ? jwtProperties.getRefreshTokenTime()
+                        : jwtProperties.getAccessTokenTime()));
 
         return Jwts.builder()
                 .header()
@@ -46,5 +42,4 @@ public class JwtTokenUtil {
                 .id(UUID.randomUUID().toString())
                 .compact();
     }
-
 }

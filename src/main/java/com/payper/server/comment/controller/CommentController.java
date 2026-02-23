@@ -25,8 +25,7 @@ public class CommentController implements CommentApi {
     public ResponseEntity<ApiResponse<Void>> updateComment(
             @AuthenticationPrincipal CustomUserDetails user,
             @PathVariable Long commentId,
-            @RequestBody @Valid CommentRequest.UpdateComment request
-    ) {
+            @RequestBody @Valid CommentRequest.UpdateComment request) {
         commentService.updateComment(user.getId(), commentId, request);
         return ResponseEntity.ok(ApiResponse.ok());
     }
@@ -39,8 +38,7 @@ public class CommentController implements CommentApi {
      */
     @DeleteMapping("/{commentId}")
     public ResponseEntity<ApiResponse<Void>> deleteComment(
-            @AuthenticationPrincipal CustomUserDetails user,
-            @PathVariable Long commentId) {
+            @AuthenticationPrincipal CustomUserDetails user, @PathVariable Long commentId) {
 
         commentService.deleteComment(user.getId(), commentId);
         return ResponseEntity.ok(ApiResponse.ok());
@@ -57,8 +55,7 @@ public class CommentController implements CommentApi {
     public ResponseEntity<ApiResponse<CommentResponse.MyCommentList>> getMyComments(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam(required = false) Long cursorId,
-            @RequestParam(defaultValue = "20") int size
-    ) {
+            @RequestParam(defaultValue = "20") int size) {
         CommentResponse.MyCommentList response = commentService.getMyComments(user.getId(), cursorId, size);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }
@@ -70,8 +67,7 @@ public class CommentController implements CommentApi {
     public ResponseEntity<ApiResponse<CommentResponse.CommentList>> getReplies(
             @PathVariable Long parentId,
             @RequestParam(required = false) Long cursorId,
-            @RequestParam(defaultValue = "20") int size
-    ) {
+            @RequestParam(defaultValue = "20") int size) {
         CommentResponse.CommentList response = commentService.getReplies(parentId, cursorId, size);
         return ResponseEntity.ok(ApiResponse.ok(response));
     }

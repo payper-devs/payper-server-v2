@@ -10,11 +10,10 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "favorite",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_favorite_user_merchant",
-                columnNames = {"user_id", "merchant_id"}
-        )
-)
+        uniqueConstraints =
+                @UniqueConstraint(
+                        name = "uk_favorite_user_merchant",
+                        columnNames = {"user_id", "merchant_id"}))
 public class Favorite {
 
     @Id

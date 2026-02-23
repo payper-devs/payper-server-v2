@@ -8,13 +8,12 @@ import com.payper.server.merchant.entity.Category;
 import com.payper.server.merchant.entity.Merchant;
 import com.payper.server.merchant.repository.CategoryRepository;
 import com.payper.server.merchant.repository.MerchantRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -30,7 +29,8 @@ public class MerchantService {
     @Transactional
     public Long registerMerchant(MerchantRequest.RegisterMerchant request) {
         // 카테고리 조회
-        Category category = categoryRepository.findById(request.categoryId())
+        Category category = categoryRepository
+                .findById(request.categoryId())
                 .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 존재하는 가맹점명인지 체크
@@ -56,7 +56,8 @@ public class MerchantService {
     @Transactional
     public void updateMerchant(Long merchantId, MerchantRequest.UpdateMerchant request) {
         // 가맹점 조회
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository
+                .findById(merchantId)
                 .orElseThrow(() -> new ApiException(ErrorCode.MERCHANT_NOT_FOUND));
 
         // 존재하는 가맹점명인지 체크 (나 제외)
@@ -81,8 +82,6 @@ public class MerchantService {
 
         List<Merchant> merchants = merchantRepository.findMerchants(categoryId);
 
-        return merchants.stream()
-                .map(MerchantResponse.MerchantItem::from)
-                .toList();
+        return merchants.stream().map(MerchantResponse.MerchantItem::from).toList();
     }
 }

@@ -1,12 +1,11 @@
 package com.payper.server.post.entity;
 
 import com.payper.server.global.entity.BaseTimeEntity;
-import com.payper.server.user.entity.User;
 import com.payper.server.merchant.entity.Merchant;
+import com.payper.server.user.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
+import lombok.*;
 
 @Entity
 @Getter
@@ -133,7 +132,7 @@ public class Post extends BaseTimeEntity {
      */
     public void inactivate() {
         this.isInactive = true;
-//        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        //        this.inactiveAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
         this.inactiveAt = LocalDateTime.now();
     }
 

@@ -35,11 +35,11 @@ public class PostService {
     @Transactional
     public Long createPost(Long userId, Long merchantId, PostRequest.CreatePost request) {
         // 사용자 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
         // 가맹점 조회
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository
+                .findById(merchantId)
                 .orElseThrow(() -> new ApiException(ErrorCode.MERCHANT_NOT_FOUND));
 
         // 게시글 생성
@@ -56,11 +56,12 @@ public class PostService {
     @Transactional
     public void updatePost(Long userId, Long postId, PostRequest.UpdatePost request) {
         // 게시글 조회 및 삭제 여부 체크
-        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+        Post post = postRepository
+                .findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 수정 권한 조회
-        if(!post.isAuthor(userId)) {
+        if (!post.isAuthor(userId)) {
             throw new ApiException(ErrorCode.NOT_POST_AUTHOR);
         }
 
@@ -76,11 +77,12 @@ public class PostService {
     @Transactional
     public void deletePost(Long userId, Long postId) {
         // 게시글 조회
-        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+        Post post = postRepository
+                .findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         // 게시글 삭제 권한 조회
-        if(!post.isAuthor(userId)) {
+        if (!post.isAuthor(userId)) {
             throw new ApiException(ErrorCode.NOT_POST_AUTHOR);
         }
 
@@ -102,7 +104,8 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostResponse.PostDetail getPostDetail(Long postId) {
         // 게시글 조회
-        Post post = postRepository.findByIdAndIsDeletedFalse(postId)
+        Post post = postRepository
+                .findByIdAndIsDeletedFalse(postId)
                 .orElseThrow(() -> new ApiException(ErrorCode.POST_NOT_FOUND));
 
         return PostResponse.PostDetail.from(post);
