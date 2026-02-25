@@ -31,8 +31,18 @@ public class NearbyMerchantService {
     public List<NearbySearchResponse.NearbyPlaceItem> searchNearbyTop10(
             double userLat, double userLng, double radiusKm) {
 
+        // 위도 1도는 약 111km, 경도 1도는 cos(위도) * 111km
+        double latChange = radiusKm / 111.0;
+        double lonChange = radiusKm / (111.0 * Math.cos(Math.toRadians(userLat)));
+
+        double minLat = userLat - latChange;
+        double maxLat = userLat + latChange;
+        double minLon = userLng - lonChange;
+        double maxLon = userLng + lonChange;
+
+
         Map<String, List<MerchantLocation>> byMerchant =
-                merchantLocationRepository.findByMerchantNames(TOP10_MERCHANTS)
+                merchantLocationRepository.findByMerchantNamesInBoundingBox(TOP10_MERCHANTS, minLat, maxLat, minLon, maxLon)
                         .stream()
                         .collect(Collectors.groupingBy(ml -> ml.getMerchant().getName()));
 

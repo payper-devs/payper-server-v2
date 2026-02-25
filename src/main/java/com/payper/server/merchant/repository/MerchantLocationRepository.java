@@ -12,9 +12,15 @@ import java.util.List;
 public interface MerchantLocationRepository extends JpaRepository<MerchantLocation, Long> {
 
     @Query("""
-        select ml from MerchantLocation ml
-        join fetch ml.merchant m
-        where m.name in :merchantNames
-    """)
-    List<MerchantLocation> findByMerchantNames(@Param("merchantNames") List<String> merchantNames);
+    select ml from MerchantLocation ml
+    join fetch ml.merchant m
+    where m.name in :merchantNames
+    and ml.latitude between :minLat and :maxLat
+    and ml.longitude between :minLon and :maxLon
+""")
+    List<MerchantLocation> findByMerchantNamesInBoundingBox(
+            @Param("merchantNames") List<String> merchantNames,
+            @Param("minLat") double minLat, @Param("maxLat") double maxLat,
+            @Param("minLon") double minLon, @Param("maxLon") double maxLon
+    );
 }
