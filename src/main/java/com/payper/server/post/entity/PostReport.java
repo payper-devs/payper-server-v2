@@ -12,40 +12,31 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
         name = "post_report",
-        uniqueConstraints = @UniqueConstraint(
-                name = "uk_post_report_post_reporter",
-                columnNames = {"post_id", "reporter_id"}
-        )
-)
+        uniqueConstraints =
+                @UniqueConstraint(
+                        name = "uk_post_report_post_reporter",
+                        columnNames = {"post_id", "reporter_id"}))
 public class PostReport extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 신고 대상 게시글
-     */
+    /** 신고 대상 게시글 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    /**
-     * 신고자
-     */
+    /** 신고자 */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reporter_id", nullable = false)
     private User reporter;
 
-    /**
-     * 신고 사유
-     */
+    /** 신고 사유 */
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ReportReason reason;
 
-    /**
-     * 상세 사유
-     */
+    /** 상세 사유 */
     private String description;
 }

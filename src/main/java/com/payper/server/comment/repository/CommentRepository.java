@@ -1,6 +1,8 @@
 package com.payper.server.comment.repository;
 
 import com.payper.server.comment.entity.Comment;
+import java.time.LocalDateTime;
+import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,9 +10,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
@@ -57,8 +56,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("postId") Long postId,
             @Param("cursorId") Long cursorId,
             @Param("createdAt") LocalDateTime createdAt,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     @Query("""
         select c from Comment c
@@ -84,8 +82,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("parentId") Long parentId,
             @Param("cursorId") Long cursorId,
             @Param("createdAt") LocalDateTime createdAt,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     @Query("""
         select c from Comment c
@@ -109,8 +106,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("userId") Long userId,
             @Param("cursorId") Long cursorId,
             @Param("createdAt") LocalDateTime createdAt,
-            Pageable pageable
-    );
+            Pageable pageable);
 
     @Modifying
     @Query("""

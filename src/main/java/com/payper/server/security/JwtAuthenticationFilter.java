@@ -5,6 +5,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,8 +14,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -29,12 +28,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
-        //System.out.println("JwtAuthenticationFilter.doFilterInternal");
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        // System.out.println("JwtAuthenticationFilter.doFilterInternal");
 
         String accessToken = jwtParseUtil.extractJwtTokenFromRequest(request);
 
@@ -43,16 +39,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        try{
-            Authentication requestAuth =
-                    UsernamePasswordAuthenticationToken.unauthenticated(null, accessToken);
+        try {
+            Authentication requestAuth = UsernamePasswordAuthenticationToken.unauthenticated(null, accessToken);
 
-            Authentication authenticated =
-                    authenticationManager.authenticate(requestAuth);
+            Authentication authenticated = authenticationManager.authenticate(requestAuth);
             SecurityContextHolder.getContext().setAuthentication(authenticated);
             filterChain.doFilter(request, response);
-        }
-        catch(AuthenticationException e){
+        } catch (AuthenticationException e) {
             SecurityContextHolder.clearContext();
             customAuthenticationEntryPoint.commence(request, response, e);
         }

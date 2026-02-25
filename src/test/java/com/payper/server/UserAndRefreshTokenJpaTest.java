@@ -1,32 +1,35 @@
 package com.payper.server;
 
-import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.payper.server.auth.jwt.RefreshTokenRepository;
+import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.security.CustomUserDetails;
-import com.payper.server.user.repository.UserRepository;
 import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
 import com.payper.server.user.entity.UserRole;
+import com.payper.server.user.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @Transactional
 @ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // <-- MySQL 그대로 사용
 class UserAndRefreshTokenJpaTest {
 
-    @Autowired UserRepository userRepository;
-    @Autowired RefreshTokenRepository refreshTokenRepository;
-    @Autowired EntityManager em;
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    EntityManager em;
 
     @Test
     @DisplayName("User 저장 후 userIdentifier로 조회가 된다")
@@ -42,8 +45,8 @@ class UserAndRefreshTokenJpaTest {
         // then
         assertThat(saved.getId()).isNotNull();
 
-        User found = userRepository.findByUserIdentifier(saved.getUserIdentifier())
-                .orElseThrow();
+        User found =
+                userRepository.findByUserIdentifier(saved.getUserIdentifier()).orElseThrow();
 
         assertThat(found.getId()).isEqualTo(saved.getId());
         assertThat(found.getOauthId()).isEqualTo("kakao-123");
@@ -61,8 +64,7 @@ class UserAndRefreshTokenJpaTest {
         em.clear();
 
         // when
-        User found = userRepository.findByOauthIdAndActive("kakao-999", true)
-                .orElseThrow();
+        User found = userRepository.findByOauthIdAndActive("kakao-999", true).orElseThrow();
 
         // then
         assertThat(found.getOauthId()).isEqualTo("kakao-999");
@@ -104,7 +106,8 @@ class UserAndRefreshTokenJpaTest {
         em.clear();
 
         // then (repo 메서드가 Optional이 아니라 null 가능)
-        RefreshTokenEntity found = refreshTokenRepository.findByHashedRefreshToken("hashed-rt-123").get();
+        RefreshTokenEntity found =
+                refreshTokenRepository.findByHashedRefreshToken("hashed-rt-123").get();
         assertThat(found).isNotNull();
         assertThat(found.getUserIdentifier()).isEqualTo(userIdentifier);
         assertThat(found.getHashedRefreshToken()).isEqualTo("hashed-rt-123");
@@ -128,16 +131,15 @@ class UserAndRefreshTokenJpaTest {
 
         // then
         assertThat(deleted).isEqualTo(1);
-        assertThat(refreshTokenRepository.findByHashedRefreshToken("hashed-del-1")).isNull();
+        assertThat(refreshTokenRepository.findByHashedRefreshToken("hashed-del-1"))
+                .isEmpty();
     }
 
     @Test
     @DisplayName("CustomUserDetails로 User -> Principal 변환이 가능하다")
     void customUserDetails_canConvertUserToPrincipal() {
         // given (id 생성 필요)
-        User saved = userRepository.save(
-                User.create(AuthType.KAKAO, "경현", "kakao-principal", UserRole.ADMIN, true)
-        );
+        User saved = userRepository.save(User.create(AuthType.KAKAO, "경현", "kakao-principal", UserRole.ADMIN, true));
         em.flush();
         em.clear();
 

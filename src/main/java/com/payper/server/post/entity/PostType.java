@@ -5,18 +5,12 @@ import lombok.Getter;
 @Getter
 public enum PostType {
 
-    /**
-     * 혜택
-     */
+    /** 혜택 */
     BENEFIT,
 
-    /**
-     * 질문
-     */
+    /** 질문 */
     QUESTION,
 
-    /**
-     * 기타
-     */
+    /** 기타 */
     ETC
 }

@@ -1,13 +1,17 @@
 package com.payper.server;
 
+import static org.assertj.core.api.Assertions.*;
+
 import com.payper.server.auth.AuthException;
 import com.payper.server.auth.jwt.RefreshTokenRepository;
-import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.entity.JwtType;
+import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.auth.jwt.util.JwtProperties;
 import com.payper.server.auth.jwt.util.JwtRefreshTokenUtil;
 import com.payper.server.auth.jwt.util.JwtTokenUtil;
+import java.util.Date;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +20,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -31,20 +30,26 @@ class JwtModulesSpringBootIntegrationTest {
 
     @Autowired
     JwtTokenUtil jwtTokenUtil;
+
     @Autowired
     JwtParseUtil jwtParseUtil;
 
     @Autowired
     JwtRefreshTokenUtil jwtRefreshTokenUtil;
+
     @Autowired
     RefreshTokenRepository refreshTokenRepository;
 
     /**
      * ✅ 이 테스트는 "실제 MySQL 연동"이므로
-     * - 각 테스트가 서로 간섭하지 않게 매번 DB를 비우고
-     * - @Transactional이 적용된 테스트라면(기본 롤백)에도,
-     * 내부 util이 REQUIRES_NEW로 flush/commit을 때리며 남길 수 있어
-     * BeforeEach에서 강제로 정리하는 방식이 안전함.
+     *
+     * <p>- 각 테스트가 서로 간섭하지 않게 매번 DB를 비우고
+     *
+     * <p>- @Transactional이 적용된 테스트라면(기본 롤백)에도,
+     *
+     * <p>내부 util이 REQUIRES_NEW로 flush/commit을 때리며 남길 수 있어
+     *
+     * <p>BeforeEach에서 강제로 정리하는 방식이 안전함.
      */
     @BeforeEach
     void cleanDb() {
@@ -114,8 +119,7 @@ class JwtModulesSpringBootIntegrationTest {
         String expired = jwtTokenUtil.generateJwtToken(JwtType.ACCESS, oldNow, userIdentifier);
 
         // when & then
-        assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(expired))
-                .isInstanceOf(AuthException.class);
+        assertThatThrownBy(() -> jwtParseUtil.getUserIdentifier(expired)).isInstanceOf(AuthException.class);
     }
 
     @Test
@@ -124,16 +128,19 @@ class JwtModulesSpringBootIntegrationTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader("Authorization", "Bearer abc.def.ghi");
 
-        assertThat(jwtParseUtil.extractJwtTokenFromRequest(request))
-                .isEqualTo("abc.def.ghi");
+        assertThat(jwtParseUtil.extractJwtTokenFromRequest(request)).isEqualTo("abc.def.ghi");
     }
 
     /**
      * ✅ DB 통합 플로우 테스트들은 '테스트 메서드 단위 트랜잭션' 안에서 실행되도록 @Transactional 부여
-     * - 이 테스트 클래스 전체에 @Transactional을 걸지 않는 이유:
-     * util 내부에 REQUIRES_NEW가 섞여 있으면 테스트 트랜잭션 롤백으로도 데이터가 남을 수 있어서
-     * 오히려 오해를 만들기 쉬움.
-     * - 대신: 각 테스트 시작 전 cleanDb()로 완전 격리
+     *
+     * <p>- 이 테스트 클래스 전체에 @Transactional을 걸지 않는 이유:
+     *
+     * <p>util 내부에 REQUIRES_NEW가 섞여 있으면 테스트 트랜잭션 롤백으로도 데이터가 남을 수 있어서
+     *
+     * <p>오히려 오해를 만들기 쉬움.
+     *
+     * <p>- 대신: 각 테스트 시작 전 cleanDb()로 완전 격리
      */
     @Test
     @Transactional
@@ -172,13 +179,12 @@ class JwtModulesSpringBootIntegrationTest {
 
         Optional<RefreshTokenEntity> found2 = jwtRefreshTokenUtil.getRefreshTokenEntity(raw2);
         assertThat(found2).isNotNull();
-        found2.ifPresent(
-                refreshTokenEntity -> assertThat(refreshTokenEntity.getUserIdentifier()
-                ).isEqualTo(userIdentifier));
+        found2.ifPresent(refreshTokenEntity ->
+                assertThat(refreshTokenEntity.getUserIdentifier()).isEqualTo(userIdentifier));
     }
 
     @Test
-    //@Transactional
+    // @Transactional
     @DisplayName("deleteAllRefreshTokenEntity는 사용자 토큰을 삭제하고, 이후 조회가 null이 된다")
     void refresh_deleteAll_deletesAndThenLookupNull() {
         String userIdentifier = "user-del";

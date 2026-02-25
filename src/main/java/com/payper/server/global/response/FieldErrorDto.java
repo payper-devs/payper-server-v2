@@ -10,6 +10,7 @@ import lombok.Getter;
 public class FieldErrorDto {
     @Schema(description = "에러 발생 필드명", example = "title")
     private final String field;
+
     @Schema(description = "에러 메시지", example = "제목을 적어주세요.")
     private final String message;
 }
