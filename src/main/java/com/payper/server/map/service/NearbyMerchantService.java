@@ -47,20 +47,21 @@ public class NearbyMerchantService {
             int remaining = MAX_RESULTS - results.size();
 
             locations.stream()
-                    .map(ml -> {
-                        double dist = haversine(userLat, userLng, ml.getLatitude(), ml.getLongitude());
-                        return new NearbySearchResponse.NearbyPlaceItem(
-                                rank,
-                                merchantName,
-                                ml.getPlaceName(),
-                                ml.getLatitude(),
-                                ml.getLongitude(),
-                                dist
-                        );
+                    .map(ml -> new Object() {
+                        final MerchantLocation location = ml;
+                        final double distance = haversine(userLat, userLng, ml.getLatitude(), ml.getLongitude());
                     })
-                    .filter(item -> item.distanceKm() <= radiusKm)
-                    .sorted(Comparator.comparingDouble(NearbySearchResponse.NearbyPlaceItem::distanceKm))
+                    .filter(item -> item.distance <= radiusKm)
+                    .sorted(Comparator.comparingDouble(item -> item.distance))
                     .limit(remaining)
+                    .map(item -> new NearbySearchResponse.NearbyPlaceItem(
+                            rank,
+                            merchantName,
+                            item.location.getPlaceName(),
+                            item.location.getLatitude(),
+                            item.location.getLongitude(),
+                            item.distance
+                    ))
                     .forEach(results::add);
         }
 
