@@ -1,0 +1,82 @@
+package com.payper.server.map.service;
+
+import com.payper.server.map.dto.NearbySearchResponse;
+import com.payper.server.merchant.entity.MerchantLocation;
+import com.payper.server.merchant.repository.MerchantLocationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
+public class NearbyMerchantService {
+
+    private static final int MAX_RESULTS = 10;
+    private static final double EARTH_RADIUS_KM = 6371.0;
+
+    private static final List<String> TOP10_MERCHANTS = List.of(
+            "스타벅스", "맥도날드", "CGV", "올리브영", "다이소",
+            "GS25", "CU", "이디야커피", "파리바게뜨", "교촌치킨"
+    );
+
+    private final MerchantLocationRepository merchantLocationRepository;
+
+    public List<NearbySearchResponse.NearbyPlaceItem> searchNearbyTop10(
+            double userLat, double userLng, double radiusKm) {
+
+        Map<String, List<MerchantLocation>> byMerchant =
+                merchantLocationRepository.findByMerchantNames(TOP10_MERCHANTS)
+                        .stream()
+                        .collect(Collectors.groupingBy(ml -> ml.getMerchant().getName()));
+
+        List<NearbySearchResponse.NearbyPlaceItem> results = new ArrayList<>();
+
+        for (int i = 0; i < TOP10_MERCHANTS.size() && results.size() < MAX_RESULTS; i++) {
+            String merchantName = TOP10_MERCHANTS.get(i);
+            List<MerchantLocation> locations = byMerchant.get(merchantName);
+            if (locations == null) continue;
+
+            int rank = i + 1;
+            int remaining = MAX_RESULTS - results.size();
+
+            locations.stream()
+                    .map(ml -> {
+                        double dist = haversine(userLat, userLng, ml.getLatitude(), ml.getLongitude());
+                        return new NearbySearchResponse.NearbyPlaceItem(
+                                rank,
+                                merchantName,
+                                ml.getPlaceName(),
+                                ml.getLatitude(),
+                                ml.getLongitude(),
+                                dist
+                        );
+                    })
+                    .filter(item -> item.distanceKm() <= radiusKm)
+                    .sorted(Comparator.comparingDouble(NearbySearchResponse.NearbyPlaceItem::distanceKm))
+                    .limit(remaining)
+                    .forEach(results::add);
+        }
+
+        return results;
+    }
+
+    /**
+     * Haversine 공식으로 두 좌표 간 거리(km)를 계산한다.
+     */
+    private double haversine(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return EARTH_RADIUS_KM * c;
+    }
+}
