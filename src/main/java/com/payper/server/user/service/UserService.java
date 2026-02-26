@@ -1,6 +1,6 @@
-package com.payper.server.user;
+package com.payper.server.user.service;
 
-import com.payper.server.auth.AuthException;
+import com.payper.server.global.exception.AuthException;
 import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.entity.User;

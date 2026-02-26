@@ -1,6 +1,5 @@
 package com.payper.server.global.exception;
 
-import com.payper.server.auth.AuthException;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.global.response.FieldErrorDto;

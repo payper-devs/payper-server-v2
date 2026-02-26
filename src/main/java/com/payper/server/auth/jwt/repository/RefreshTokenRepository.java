@@ -1,4 +1,4 @@
-package com.payper.server.auth.jwt;
+package com.payper.server.auth.jwt.repository;
 
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

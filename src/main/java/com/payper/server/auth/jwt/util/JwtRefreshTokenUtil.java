@@ -1,6 +1,6 @@
 package com.payper.server.auth.jwt.util;
 
-import com.payper.server.auth.jwt.RefreshTokenRepository;
+import com.payper.server.auth.jwt.repository.RefreshTokenRepository;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;

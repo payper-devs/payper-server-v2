@@ -1,7 +1,7 @@
 package com.payper.server;
 
-import com.payper.server.auth.AuthException;
-import com.payper.server.auth.jwt.RefreshTokenRepository;
+import com.payper.server.global.exception.AuthException;
+import com.payper.server.auth.jwt.repository.RefreshTokenRepository;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.util.JwtParseUtil;

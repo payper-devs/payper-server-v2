@@ -1,4 +1,4 @@
-package com.payper.server.auth;
+package com.payper.server.global.exception;
 
 import com.payper.server.global.response.ErrorCode;
 import lombok.Getter;

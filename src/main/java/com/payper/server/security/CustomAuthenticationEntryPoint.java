@@ -1,6 +1,6 @@
 package com.payper.server.security;
 
-import com.payper.server.auth.AuthException;
+import com.payper.server.global.exception.AuthException;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;
 import jakarta.servlet.ServletException;
