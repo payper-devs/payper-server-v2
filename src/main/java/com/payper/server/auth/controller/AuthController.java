@@ -1,9 +1,9 @@
 package com.payper.server.auth.controller;
 
-import com.payper.server.auth.service.AuthService;
 import com.payper.server.auth.dto.request.LoginRequest;
 import com.payper.server.auth.dto.response.LoginSuccessResponse;
 import com.payper.server.auth.dto.response.ReissueSuccessResponse;
+import com.payper.server.auth.service.AuthService;
 import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.user.entity.AuthType;

@@ -1,6 +1,5 @@
 package com.payper.server.auth.service;
 
-import com.payper.server.global.exception.AuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
@@ -9,11 +8,12 @@ import com.payper.server.auth.jwt.util.JwtTokenUtil;
 import com.payper.server.auth.util.KakaoOAuthUtilImpl;
 import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.exception.ApiException;
+import com.payper.server.global.exception.AuthException;
 import com.payper.server.global.response.ErrorCode;
-import com.payper.server.user.service.UserService;
 import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
 import com.payper.server.user.entity.UserRole;
+import com.payper.server.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.Optional;

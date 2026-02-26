@@ -1,7 +1,7 @@
 package com.payper.server.auth.jwt.util;
 
-import com.payper.server.global.exception.AuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
+import com.payper.server.global.exception.AuthException;
 import com.payper.server.global.response.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;

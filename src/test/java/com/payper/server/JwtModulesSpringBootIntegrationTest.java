@@ -1,18 +1,15 @@
 package com.payper.server;
 
-import com.payper.server.global.exception.AuthException;
-import com.payper.server.auth.jwt.repository.RefreshTokenRepository;
-import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
 import static org.assertj.core.api.Assertions.*;
 
-import com.payper.server.auth.AuthException;
-import com.payper.server.auth.jwt.RefreshTokenRepository;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.entity.RefreshTokenEntity;
+import com.payper.server.auth.jwt.repository.RefreshTokenRepository;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
 import com.payper.server.auth.jwt.util.JwtProperties;
 import com.payper.server.auth.jwt.util.JwtRefreshTokenUtil;
 import com.payper.server.auth.jwt.util.JwtTokenUtil;
+import com.payper.server.global.exception.AuthException;
 import java.util.Date;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;

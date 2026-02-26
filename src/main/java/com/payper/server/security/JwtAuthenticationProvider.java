@@ -1,8 +1,8 @@
 package com.payper.server.security;
 
-import com.payper.server.global.exception.AuthException;
 import com.payper.server.auth.jwt.entity.JwtType;
 import com.payper.server.auth.jwt.util.JwtParseUtil;
+import com.payper.server.global.exception.AuthException;
 import com.payper.server.global.response.ErrorCode;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
