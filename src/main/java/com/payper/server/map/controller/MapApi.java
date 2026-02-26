@@ -22,6 +22,5 @@ public interface MapApi {
                     """,
             security = {})
     ResponseEntity<ApiResponse<List<NearbySearchResponse.NearbyPlaceItem>>> getNearbyTop10(
-            @Parameter(description = "검색 조건 (위도, 경도, 반경(km))", required = true)
-            NearbySearchRequest request);
+            @Parameter(description = "검색 조건 (위도, 경도, 반경(km))", required = true) NearbySearchRequest request);
 }

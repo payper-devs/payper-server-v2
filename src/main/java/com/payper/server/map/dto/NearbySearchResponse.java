@@ -9,8 +9,7 @@ public class NearbySearchResponse {
             @Schema(description = "Top10 가맹점 우선순위 (1 = 최우선)", example = "1")
             int merchantRank,
 
-            @Schema(description = "가맹점명", example = "스타벅스")
-            String merchantName,
+            @Schema(description = "가맹점명", example = "스타벅스") String merchantName,
 
             @Schema(description = "지점명", example = "스타벅스 강남점")
             String placeName,
