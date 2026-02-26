@@ -6,6 +6,8 @@ import com.payper.server.global.response.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -14,9 +16,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
-
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @Component
@@ -27,10 +26,8 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     @Override
     public void commence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            AuthenticationException authException
-    ) throws IOException, ServletException {
+            HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
 
         if (response.isCommitted()) {
             return;
@@ -39,7 +36,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         ErrorCode errorCode = resolveErrorCode(authException);
 
         ApiResponse<Void> body = ApiResponse.fail(errorCode);
-        log.warn("[AUTH_EXCEPTION IN FILTER] code={}, message={}",body.getError().getCode(),body.getError().getMessage());
+        log.warn(
+                "[AUTH_EXCEPTION IN FILTER] code={}, message={}",
+                body.getError().getCode(),
+                body.getError().getMessage());
 
         response.setStatus(errorCode.getStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -50,7 +50,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
     private ErrorCode resolveErrorCode(AuthenticationException ex) {
         // 1) security filter 체인 속 auth 예외 발생 케이스
-        if(ex instanceof AuthException authException) {
+        if (ex instanceof AuthException authException) {
             return authException.getErrorCode();
         }
 
@@ -62,5 +62,4 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         // 3) 최후의 기본값
         return ErrorCode.UNAUTHENTICATED;
     }
-
 }

@@ -4,13 +4,12 @@ import com.payper.server.auth.AuthException;
 import com.payper.server.global.response.ApiResponse;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.global.response.FieldErrorDto;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
@@ -19,7 +18,11 @@ public class GlobalExceptionHandler {
     // 비즈니스 예외
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ApiResponse<Void>> handleApiException(ApiException e) {
-        log.warn("[API_EXCEPTION] code={}, message={}", e.getErrorCode().getCode(), e.getErrorCode().getMessage(), e);
+        log.warn(
+                "[API_EXCEPTION] code={}, message={}",
+                e.getErrorCode().getCode(),
+                e.getErrorCode().getMessage(),
+                e);
         return buildErrorResponse(e.getErrorCode());
     }
 
@@ -32,23 +35,26 @@ public class GlobalExceptionHandler {
 
     // @Valid 전용
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<List<FieldErrorDto>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public ResponseEntity<ApiResponse<List<FieldErrorDto>>> handleMethodArgumentNotValidException(
+            MethodArgumentNotValidException e) {
         List<FieldErrorDto> fieldErrors = e.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> new FieldErrorDto
-                        (fieldError.getField(), fieldError.getDefaultMessage())).toList();
+                .map(fieldError -> new FieldErrorDto(fieldError.getField(), fieldError.getDefaultMessage()))
+                .toList();
 
         log.warn("[VALIDATION_FAILED] errors={}", fieldErrors);
 
         ErrorCode errorCode = ErrorCode.BAD_REQUEST;
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.fail(errorCode, fieldErrors));
+        return ResponseEntity.status(errorCode.getStatus()).body(ApiResponse.fail(errorCode, fieldErrors));
     }
 
     // 시큐리티 필터 밖에서 발생한 Auth 예외
     @ExceptionHandler(AuthException.class)
     public ResponseEntity<ApiResponse<Void>> handleAuthException(AuthException e) {
-        log.warn("[AUTH_EXCEPTION] code={}, message={}", e.getErrorCode().getCode(), e.getErrorCode().getMessage(), e);
+        log.warn(
+                "[AUTH_EXCEPTION] code={}, message={}",
+                e.getErrorCode().getCode(),
+                e.getErrorCode().getMessage(),
+                e);
         return buildErrorResponse(e.getErrorCode());
     }
 
@@ -63,8 +69,6 @@ public class GlobalExceptionHandler {
     // 공통 응답 생성 헬퍼
     // ======================
     private ResponseEntity<ApiResponse<Void>> buildErrorResponse(ErrorCode errorCode) {
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(ApiResponse.fail(errorCode));
+        return ResponseEntity.status(errorCode.getStatus()).body(ApiResponse.fail(errorCode));
     }
 }

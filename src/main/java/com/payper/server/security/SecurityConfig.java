@@ -41,11 +41,10 @@ public class SecurityConfig {
 
     @PostConstruct
     void init() {
-        var requestMatcher =
-                PathPatternRequestMatcher.withDefaults().basePath("/");
+        var requestMatcher = PathPatternRequestMatcher.withDefaults().basePath("/");
 
         permitAllRequestMatcher = new OrRequestMatcher(
-                //requestMatcher.matcher("/**"),
+                // requestMatcher.matcher("/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/swagger-ui/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/v3/api-docs/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/favicon.ico"),
@@ -56,9 +55,10 @@ public class SecurityConfig {
                 requestMatcher.matcher(HttpMethod.GET, "/api/v1/categories/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/api/v1/map/**")
         );
+      
         // 인증이 필요한 요청
         authenticatedRequestMatcher = new OrRequestMatcher(
-                //requestMatcher.matcher("/**"),
+                // requestMatcher.matcher("/**"),
                 requestMatcher.matcher(HttpMethod.GET, "/me"),
 
                 // 댓글 관련
@@ -72,15 +72,13 @@ public class SecurityConfig {
                 requestMatcher.matcher(HttpMethod.DELETE, "/api/v1/posts/**"),
 
                 // 가맹점 관련
-                requestMatcher.matcher(HttpMethod.POST, "/api/v1/merchants/*/posts")
-        );
+                requestMatcher.matcher(HttpMethod.POST, "/api/v1/merchants/*/posts"));
         adminRequestMatcher = new OrRequestMatcher(
                 requestMatcher.matcher(HttpMethod.GET, "/admin/**"),
                 requestMatcher.matcher(HttpMethod.POST, "/api/v1/merchants"),
                 requestMatcher.matcher(HttpMethod.PUT, "/api/v1/merchants/**"),
                 requestMatcher.matcher(HttpMethod.POST, "/api/v1/categories"),
-                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/categories/**")
-        );
+                requestMatcher.matcher(HttpMethod.PUT, "/api/v1/categories/**"));
     }
 
     @Bean
@@ -90,59 +88,38 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        return new ProviderManager(
-                jwtAuthenticationProvider
-        );
+        return new ProviderManager(jwtAuthenticationProvider);
     }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         RequestMatcher skipEndPoints = permitAllRequestMatcher;
         return new JwtAuthenticationFilter(
-                skipEndPoints,
-                jwtParseUtil,
-                authenticationManager(),
-                customAuthenticationEntryPoint
-        );
+                skipEndPoints, jwtParseUtil, authenticationManager(), customAuthenticationEntryPoint);
     }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                .csrf(AbstractHttpConfigurer::disable)
+        return http.csrf(AbstractHttpConfigurer::disable)
                 .cors((registry) -> registry.configurationSource(corsConfigurationSource()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .sessionManagement(
-                        a -> a.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS
-                        )
-                )
-
-                .authorizeHttpRequests(
-                        configurer -> configurer
-                                .requestMatchers(permitAllRequestMatcher)
-                                .permitAll()
-                                .requestMatchers(authenticatedRequestMatcher)
-                                .authenticated()
-                                .requestMatchers(adminRequestMatcher)
-                                .hasRole("ADMIN")
-                )
-
+                .sessionManagement(a -> a.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(configurer -> configurer
+                        .requestMatchers(permitAllRequestMatcher)
+                        .permitAll()
+                        .requestMatchers(authenticatedRequestMatcher)
+                        .authenticated()
+                        .requestMatchers(adminRequestMatcher)
+                        .hasRole("ADMIN"))
                 .addFilterAfter(jwtAuthenticationFilter(), LogoutFilter.class)
-
-                .exceptionHandling(
-                        configurer -> configurer
-                                .authenticationEntryPoint(customAuthenticationEntryPoint)
-                                .accessDeniedHandler(customAccessDeniedHandler)
-                )
-
+                .exceptionHandling(configurer -> configurer
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
                 .build();
     }
-
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

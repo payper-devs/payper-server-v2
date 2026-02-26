@@ -18,28 +18,26 @@ public interface CommentApi {
     ResponseEntity<ApiResponse<Void>> updateComment(
             CustomUserDetails user,
             @Parameter(description = "댓글 ID", example = "1") Long commentId,
-            CommentRequest.UpdateComment request
-    );
+            CommentRequest.UpdateComment request);
 
     @Operation(summary = "댓글 삭제", description = "작성자만 삭제 가능. 자식 댓글은 삭제되지 않습니다.")
     @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<ApiResponse<Void>> deleteComment(
-            CustomUserDetails user,
-            @Parameter(description = "댓글 ID", example = "1") Long commentId
-    );
+            CustomUserDetails user, @Parameter(description = "댓글 ID", example = "1") Long commentId);
 
     @Operation(summary = "내가 쓴 댓글 조회", description = "커서 기반 페이지네이션. 최신순 정렬. 삭제된 댓글은 제외됩니다.")
     @SecurityRequirement(name = "bearerAuth")
     ResponseEntity<ApiResponse<CommentResponse.MyCommentList>> getMyComments(
             CustomUserDetails user,
             @Parameter(description = "마지막 조회 댓글 ID (첫 요청 시 생략)") Long cursorId,
-            @Parameter(description = "조회 개수", example = "20") int size
-    );
+            @Parameter(description = "조회 개수", example = "20") int size);
 
-    @Operation(summary = "대댓글 조회", description = "부모 댓글의 대댓글을 커서 기반으로 조회합니다. 삭제된 댓글은 제외됩니다.", security = {})
+    @Operation(
+            summary = "대댓글 조회",
+            description = "부모 댓글의 대댓글을 커서 기반으로 조회합니다. 삭제된 댓글은 제외됩니다.",
+            security = {})
     ResponseEntity<ApiResponse<CommentResponse.CommentList>> getReplies(
             @Parameter(description = "부모 댓글 ID", example = "1") Long parentId,
             @Parameter(description = "마지막 조회 댓글 ID (첫 요청 시 생략)") Long cursorId,
-            @Parameter(description = "조회 개수", example = "20") int size
-    );
+            @Parameter(description = "조회 개수", example = "20") int size);
 }

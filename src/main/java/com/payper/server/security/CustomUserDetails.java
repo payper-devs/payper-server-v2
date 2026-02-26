@@ -2,13 +2,12 @@ package com.payper.server.security;
 
 import com.payper.server.user.entity.User;
 import jakarta.annotation.Nullable;
+import java.util.Collection;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
@@ -16,11 +15,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(
-                new SimpleGrantedAuthority(
-                        "ROLE_" + user.getUserRole().name()
-                )
-        );
+        return List.of(new SimpleGrantedAuthority("ROLE_" + user.getUserRole().name()));
     }
 
     @Override

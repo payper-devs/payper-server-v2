@@ -6,9 +6,29 @@ on:
   pull_request:
     branches: [ "develop" ]
 
-
 jobs:
-  deploy:
+  ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Grant gradlew permission
+        run: chmod +x gradlew
+
+      - name: Run format check & tests
+        run: ./gradlew clean check
+
+  cd:
+    needs: ci
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +45,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build JAR
-        run: ./gradlew clean build -x test
+        run: ./gradlew clean bootJar
 
       # buildx 세팅 (amd64)
       - name: Set up Docker Buildx

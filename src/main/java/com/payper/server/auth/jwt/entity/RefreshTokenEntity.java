@@ -14,16 +14,13 @@ public class RefreshTokenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true,updatable = false)
+    @Column(nullable = false, unique = true, updatable = false)
     private String userIdentifier;
 
-    @Column(nullable = false,unique = true, updatable = false)
+    @Column(nullable = false, unique = true, updatable = false)
     private String hashedRefreshToken;
 
-    public static RefreshTokenEntity create(
-            String userIdentifier,
-            String hashedRefreshToken
-    ){
+    public static RefreshTokenEntity create(String userIdentifier, String hashedRefreshToken) {
         return RefreshTokenEntity.builder()
                 .userIdentifier(userIdentifier)
                 .hashedRefreshToken(hashedRefreshToken)
