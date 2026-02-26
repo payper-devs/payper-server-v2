@@ -18,9 +18,7 @@ public class MerchantLocation {
     @JoinColumn(name = "merchant_id", nullable = false)
     private Merchant merchant;
 
-    /**
-     * 지점명 (예: 스타벅스 강남점)
-     */
+    /** 지점명 (예: 스타벅스 강남점) */
     @Column(nullable = false)
     private String placeName;
 
@@ -30,8 +28,7 @@ public class MerchantLocation {
     @Column(nullable = false)
     private Double longitude;
 
-    public static MerchantLocation create(Merchant merchant, String placeName,
-                                          Double latitude, Double longitude) {
+    public static MerchantLocation create(Merchant merchant, String placeName, Double latitude, Double longitude) {
         return MerchantLocation.builder()
                 .merchant(merchant)
                 .placeName(placeName)

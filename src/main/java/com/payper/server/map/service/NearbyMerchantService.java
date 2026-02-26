@@ -3,15 +3,14 @@ package com.payper.server.map.service;
 import com.payper.server.map.dto.NearbySearchResponse;
 import com.payper.server.merchant.entity.MerchantLocation;
 import com.payper.server.merchant.repository.MerchantLocationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -21,10 +20,8 @@ public class NearbyMerchantService {
     private static final int MAX_RESULTS = 10;
     private static final double EARTH_RADIUS_KM = 6371.0;
 
-    private static final List<String> TOP10_MERCHANTS = List.of(
-            "스타벅스", "맥도날드", "CGV", "올리브영", "다이소",
-            "GS25", "CU", "이디야커피", "파리바게뜨", "교촌치킨"
-    );
+    private static final List<String> TOP10_MERCHANTS =
+            List.of("스타벅스", "맥도날드", "CGV", "올리브영", "다이소", "GS25", "CU", "이디야커피", "파리바게뜨", "교촌치킨");
 
     private final MerchantLocationRepository merchantLocationRepository;
 
@@ -40,9 +37,9 @@ public class NearbyMerchantService {
         double minLon = userLng - lonChange;
         double maxLon = userLng + lonChange;
 
-
         Map<String, List<MerchantLocation>> byMerchant =
-                merchantLocationRepository.findByMerchantNamesInBoundingBox(TOP10_MERCHANTS, minLat, maxLat, minLon, maxLon)
+                merchantLocationRepository
+                        .findByMerchantNamesInBoundingBox(TOP10_MERCHANTS, minLat, maxLat, minLon, maxLon)
                         .stream()
                         .collect(Collectors.groupingBy(ml -> ml.getMerchant().getName()));
 
@@ -70,23 +67,22 @@ public class NearbyMerchantService {
                             item.location.getPlaceName(),
                             item.location.getLatitude(),
                             item.location.getLongitude(),
-                            item.distance
-                    ))
+                            item.distance))
                     .forEach(results::add);
         }
 
         return results;
     }
 
-    /**
-     * Haversine 공식으로 두 좌표 간 거리(km)를 계산한다.
-     */
+    /** Haversine 공식으로 두 좌표 간 거리(km)를 계산한다. */
     private double haversine(double lat1, double lon1, double lat2, double lon2) {
         double dLat = Math.toRadians(lat2 - lat1);
         double dLon = Math.toRadians(lon2 - lon1);
         double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
-                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                + Math.cos(Math.toRadians(lat1))
+                        * Math.cos(Math.toRadians(lat2))
+                        * Math.sin(dLon / 2)
+                        * Math.sin(dLon / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return EARTH_RADIUS_KM * c;
     }

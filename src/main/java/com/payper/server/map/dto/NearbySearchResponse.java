@@ -8,6 +8,5 @@ public class NearbySearchResponse {
             String placeName,
             double latitude,
             double longitude,
-            double distanceKm
-    ) {}
+            double distanceKm) {}
 }
