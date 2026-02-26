@@ -50,6 +50,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Archunit
+//	testImplementation 'com.tngtech.archunit:archunit:1.4.1'
+	testImplementation 'com.tngtech.archunit:archunit-junit5:1.4.1'
 }
 
 tasks.named('test') {
