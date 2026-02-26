@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+PROJECT_ROOT=$(git rev-parse --show-toplevel)
+
+echo "Running spotlessCheck before push..."
+cd $PROJECT_ROOT && ./gradlew spotlessCheck
+
+if [ $? -ne 0 ]; then
+  echo "Spotless check failed. Please run ./gradlew spotlessApply"
+  exit 1
+fi
+
+echo "Spotless check passed."

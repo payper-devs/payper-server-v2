@@ -6,19 +6,18 @@ import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.crypto.Mac;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
+import javax.crypto.Mac;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -32,20 +31,13 @@ public class JwtRefreshTokenUtil {
     @PostConstruct
     protected void init() {
         refreshSecretKey = new SecretKeySpec(
-                jwtProperties.getRefreshTokenSecretKey()
-                        .getBytes(StandardCharsets.UTF_8),
-                Jwts.SIG.HS512.key().build().getAlgorithm()
-        );
+                jwtProperties.getRefreshTokenSecretKey().getBytes(StandardCharsets.UTF_8),
+                Jwts.SIG.HS512.key().build().getAlgorithm());
     }
 
-    public RefreshTokenEntity generateRefreshTokenEntity(
-            String userIdentifier, String refreshToken
-    ) {
+    public RefreshTokenEntity generateRefreshTokenEntity(String userIdentifier, String refreshToken) {
 
-        return RefreshTokenEntity.create(
-                userIdentifier,
-                hashRefreshToken(refreshToken)
-        );
+        return RefreshTokenEntity.create(userIdentifier, hashRefreshToken(refreshToken));
     }
 
     private String hashRefreshToken(String refreshToken) {
@@ -70,10 +62,8 @@ public class JwtRefreshTokenUtil {
     }
 
     public Optional<RefreshTokenEntity> getRefreshTokenEntity(String refreshToken) {
-        return refreshTokenRepository
-                .findByHashedRefreshToken(hashRefreshToken(refreshToken));
+        return refreshTokenRepository.findByHashedRefreshToken(hashRefreshToken(refreshToken));
     }
-
 
     public void generateCookieRefreshToken(String refreshToken, HttpServletResponse response) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);

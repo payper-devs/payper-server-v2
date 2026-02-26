@@ -8,13 +8,12 @@ import com.payper.server.merchant.entity.Category;
 import com.payper.server.merchant.entity.Merchant;
 import com.payper.server.merchant.repository.CategoryRepository;
 import com.payper.server.merchant.repository.MerchantRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -24,13 +23,12 @@ public class MerchantService {
     private final MerchantRepository merchantRepository;
     private final CategoryRepository categoryRepository;
 
-    /**
-     * 가맹점 등록
-     */
+    /** 가맹점 등록 */
     @Transactional
     public Long registerMerchant(MerchantRequest.RegisterMerchant request) {
         // 카테고리 조회
-        Category category = categoryRepository.findById(request.categoryId())
+        Category category = categoryRepository
+                .findById(request.categoryId())
                 .orElseThrow(() -> new ApiException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 존재하는 가맹점명인지 체크
@@ -50,13 +48,12 @@ public class MerchantService {
         return merchant.getId();
     }
 
-    /**
-     * 가맹점 수정
-     */
+    /** 가맹점 수정 */
     @Transactional
     public void updateMerchant(Long merchantId, MerchantRequest.UpdateMerchant request) {
         // 가맹점 조회
-        Merchant merchant = merchantRepository.findById(merchantId)
+        Merchant merchant = merchantRepository
+                .findById(merchantId)
                 .orElseThrow(() -> new ApiException(ErrorCode.MERCHANT_NOT_FOUND));
 
         // 존재하는 가맹점명인지 체크 (나 제외)
@@ -70,9 +67,7 @@ public class MerchantService {
         log.info("가맹점 수정 완료 - merchantId: {}", merchant.getId());
     }
 
-    /**
-     * 가맹점 리스트 조회
-     */
+    /** 가맹점 리스트 조회 */
     @Transactional(readOnly = true)
     public List<MerchantResponse.MerchantItem> getMerchants(Long categoryId) {
         if (categoryId != null && !categoryRepository.existsById(categoryId)) {
@@ -81,8 +76,6 @@ public class MerchantService {
 
         List<Merchant> merchants = merchantRepository.findMerchants(categoryId);
 
-        return merchants.stream()
-                .map(MerchantResponse.MerchantItem::from)
-                .toList();
+        return merchants.stream().map(MerchantResponse.MerchantItem::from).toList();
     }
 }

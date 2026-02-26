@@ -15,14 +15,13 @@ import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
 import com.payper.server.user.entity.UserRole;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Date;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-
-import java.util.Date;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,33 +36,33 @@ public class AuthService {
     private final JwtParseUtil jwtParseUtil;
 
     private User findOrEnrollUser(OAuthUserInfo oauthUserInfo, UserRole userRole) {
-        //먼저 검증
+        // 먼저 검증
         Optional<User> user = userService.getActiveOAuthUser(oauthUserInfo);
 
-        user.ifPresent(
-                u->{
-                    log.info("가입 유저 확인 - userId: {}, userName: {}, userRole: {}", u.getId(),u.getName(),u.getUserRole().name());
-                }
-        );
+        user.ifPresent(u -> {
+            log.info(
+                    "가입 유저 확인 - userId: {}, userName: {}, userRole: {}",
+                    u.getId(),
+                    u.getName(),
+                    u.getUserRole().name());
+        });
 
-        return user.orElseGet(
-                () -> {
-                    User savedUser = userService.save(
-                            User.create(
-                                    AuthType.KAKAO,
-                                    oauthUserInfo.getName(),
-                                    oauthUserInfo.getOauthId(),
-                                    userRole, // 매개변수 사용
-                                    true
-                            )
-                    );
+        return user.orElseGet(() -> {
+            User savedUser = userService.save(User.create(
+                    AuthType.KAKAO,
+                    oauthUserInfo.getName(),
+                    oauthUserInfo.getOauthId(),
+                    userRole, // 매개변수 사용
+                    true));
 
-                    log.info("유저 가입 & 저장 - userId: {}, userName: {}, userRole: {}",
-                            savedUser.getId(),savedUser.getName(),savedUser.getUserRole().name());
+            log.info(
+                    "유저 가입 & 저장 - userId: {}, userName: {}, userRole: {}",
+                    savedUser.getId(),
+                    savedUser.getName(),
+                    savedUser.getUserRole().name());
 
-                    return savedUser;
-                }
-        );
+            return savedUser;
+        });
     }
 
     public User findOrEnrollOAuthUser(OAuthUserInfo oauthUserInfo) {
@@ -87,7 +86,7 @@ public class AuthService {
         upsertRefreshTokenAndEntity(user.getUserIdentifier(), response, issuedAt);
         String accessToken = upsertAccessToken(user.getUserIdentifier(), issuedAt);
 
-        log.info("업서트 토큰 - userId: {}, issuedAt: {}",user.getId(),issuedAt);
+        log.info("업서트 토큰 - userId: {}, issuedAt: {}", user.getId(), issuedAt);
 
         return accessToken;
     }
@@ -114,30 +113,25 @@ public class AuthService {
             }
             userIdentifier = jwtParseUtil.getUserIdentifier(refreshToken);
         } catch (AuthException e) {
-            throw
-                    switch (e.getErrorCode()) {
-                        case JWT_ERROR -> new ApiException(ErrorCode.JWT_REISSUE_ERROR);
-                        case JWT_EXPIRED -> new ApiException(ErrorCode.JWT_REISSUE_EXPIRED);
-                        default -> new ApiException(ErrorCode.REISSUE_ERROR);
-                    };
+            throw switch (e.getErrorCode()) {
+                case JWT_ERROR -> new ApiException(ErrorCode.JWT_REISSUE_ERROR);
+                case JWT_EXPIRED -> new ApiException(ErrorCode.JWT_REISSUE_EXPIRED);
+                default -> new ApiException(ErrorCode.REISSUE_ERROR);
+            };
         }
 
         // 2) DB에 없으면 리플레이 공격 의심 -> 해당 유저 토큰 전부 폐기
         Optional<RefreshTokenEntity> refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
-        refreshTokenEntity.ifPresentOrElse(
-                (r) -> {
-                },
-                () -> {
-                    jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
-                    throw new ApiException(ErrorCode.JWT_REISSUE_OLD);
-                }
-        );
+        refreshTokenEntity.ifPresentOrElse((r) -> {}, () -> {
+            jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(userIdentifier);
+            throw new ApiException(ErrorCode.JWT_REISSUE_OLD);
+        });
 
         Date reissuedAt = jwtParseUtil.getIssuedAt(refreshToken);
         upsertRefreshTokenAndEntity(userIdentifier, response, reissuedAt);
         String accessToken = upsertAccessToken(userIdentifier, new Date());
 
-        log.info("토큰 재발급 완료 reissuedAt: {}",reissuedAt);
+        log.info("토큰 재발급 완료 reissuedAt: {}", reissuedAt);
 
         return accessToken;
     }
@@ -152,9 +146,7 @@ public class AuthService {
         RefreshTokenEntity refreshTokenEntity =
                 jwtRefreshTokenUtil.generateRefreshTokenEntity(userIdentifier, refreshToken);
 
-
-        if(response!=null)
-            jwtRefreshTokenUtil.generateCookieRefreshToken(refreshToken, response);
+        if (response != null) jwtRefreshTokenUtil.generateCookieRefreshToken(refreshToken, response);
 
         jwtRefreshTokenUtil.upsertRefreshTokenEntity(refreshTokenEntity);
     }
@@ -167,10 +159,7 @@ public class AuthService {
         }
 
         Optional<RefreshTokenEntity> refreshTokenEntity = jwtRefreshTokenUtil.getRefreshTokenEntity(refreshToken);
-        refreshTokenEntity.ifPresent(
-                r ->
-                        jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(r.getUserIdentifier())
-        );
+        refreshTokenEntity.ifPresent(r -> jwtRefreshTokenUtil.deleteAllRefreshTokenEntity(r.getUserIdentifier()));
 
         log.info("리프레시 토큰 만료 완료");
     }

@@ -5,11 +5,10 @@ import com.payper.server.auth.util.OAuthUserInfo;
 import com.payper.server.global.response.ErrorCode;
 import com.payper.server.user.entity.User;
 import com.payper.server.user.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +21,13 @@ public class UserService {
     }
 
     private void validateDuplicate(final User user) {
-        Optional<User> findUser = switch (user.getAuthType()) {
-            case KAKAO -> userRepository.findByOauthIdAndActive(user.getOauthId(), true);
-            default ->
-                    throw new IllegalArgumentException("Unsupported AuthType for duplicate validation: " + user.getAuthType());
-        };
+        Optional<User> findUser =
+                switch (user.getAuthType()) {
+                    case KAKAO -> userRepository.findByOauthIdAndActive(user.getOauthId(), true);
+                    default ->
+                        throw new IllegalArgumentException(
+                                "Unsupported AuthType for duplicate validation: " + user.getAuthType());
+                };
 
         if (findUser.isPresent()) {
             throw new AuthException(ErrorCode.USER_DUPLICATE);
@@ -35,18 +36,13 @@ public class UserService {
 
     public Optional<User> getActiveOAuthUser(OAuthUserInfo oAuthUserInfo) {
         Optional<User> user =
-                userRepository.findByOauthIdAndAuthType(
-                        oAuthUserInfo.getOauthId(),
-                        oAuthUserInfo.getAuthType()
-                );
+                userRepository.findByOauthIdAndAuthType(oAuthUserInfo.getOauthId(), oAuthUserInfo.getAuthType());
 
-        user.ifPresent(
-                u -> {
-                    if (!u.isActive()) {
-                        throw new AuthException(ErrorCode.USER_INACTIVE);
-                    }
-                }
-        );
+        user.ifPresent(u -> {
+            if (!u.isActive()) {
+                throw new AuthException(ErrorCode.USER_INACTIVE);
+            }
+        });
 
         return user;
     }

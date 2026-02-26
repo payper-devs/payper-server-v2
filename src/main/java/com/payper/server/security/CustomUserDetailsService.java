@@ -2,8 +2,8 @@ package com.payper.server.security;
 
 import com.payper.server.global.exception.AuthException;
 import com.payper.server.global.response.ErrorCode;
-import com.payper.server.user.repository.UserRepository;
 import com.payper.server.user.entity.User;
+import com.payper.server.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -24,7 +24,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public User getActiveUserByUserIdentifier(String userIdentifier) {
-        User user = userRepository.findByUserIdentifier(userIdentifier)
+        User user = userRepository
+                .findByUserIdentifier(userIdentifier)
                 .orElseThrow(() -> new AuthException(ErrorCode.USER_NOT_FOUND_AUTH));
 
         if (!user.isActive()) {

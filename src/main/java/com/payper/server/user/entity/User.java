@@ -1,9 +1,8 @@
 package com.payper.server.user.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.UUID;
+import lombok.*;
 
 @Entity
 @Getter
@@ -17,7 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true,updatable = false)
+    @Column(nullable = false, unique = true, updatable = false)
     private String userIdentifier;
 
     @Enumerated(EnumType.STRING)
@@ -27,7 +26,7 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false,updatable = false)
+    @Column(nullable = false, updatable = false)
     private String oauthId;
 
     @Enumerated(EnumType.STRING)
@@ -37,13 +36,7 @@ public class User {
     @Column(nullable = false)
     private boolean active;
 
-    public static User create(
-            AuthType authType,
-            String name,
-            String oauthId,
-            UserRole userRole,
-            boolean active
-    ){
+    public static User create(AuthType authType, String name, String oauthId, UserRole userRole, boolean active) {
         return User.builder()
                 .userIdentifier(UUID.randomUUID().toString())
                 .authType(authType)

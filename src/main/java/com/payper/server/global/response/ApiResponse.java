@@ -12,14 +12,15 @@ import org.springframework.http.HttpStatus;
 public class ApiResponse<T> {
     @Schema(description = "HTTP 상태 코드", example = "200")
     private final Integer status;
+
     @Schema(description = "응답 데이터")
     private final T data;
+
     @Schema(description = "에러 정보 (성공 시 null)")
     private final ExceptionDto error;
 
     public static <T> ApiResponse<T> ok() {
-        return ApiResponse
-                .<T>builder()
+        return ApiResponse.<T>builder()
                 .status(HttpStatus.OK.value())
                 .data(null)
                 .error(null)
@@ -27,8 +28,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> ok(@Nullable T data) {
-        return ApiResponse
-                .<T>builder()
+        return ApiResponse.<T>builder()
                 .status(HttpStatus.OK.value())
                 .data(data)
                 .error(null)
@@ -36,8 +36,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> created(@Nullable T data) {
-        return ApiResponse
-                .<T>builder()
+        return ApiResponse.<T>builder()
                 .status(HttpStatus.CREATED.value())
                 .data(data)
                 .error(null)
@@ -45,8 +44,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> fail(ErrorCode errorCode) {
-        return ApiResponse
-                .<T>builder()
+        return ApiResponse.<T>builder()
                 .status(errorCode.getStatus().value())
                 .data(null)
                 .error(ExceptionDto.of(errorCode))
@@ -54,8 +52,7 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> fail(ErrorCode errorCode, T data) {
-        return ApiResponse
-                .<T>builder()
+        return ApiResponse.<T>builder()
                 .status(errorCode.getStatus().value())
                 .data(data)
                 .error(ExceptionDto.of(errorCode))

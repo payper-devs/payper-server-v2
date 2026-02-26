@@ -7,14 +7,13 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +24,8 @@ public class JwtParseUtil {
     @PostConstruct
     protected void init() {
         key = new SecretKeySpec(
-                jwtProperties.getSecretKey()
-                        .getBytes(StandardCharsets.UTF_8),
-                Jwts.SIG.HS512.key().build().getAlgorithm()
-        );
+                jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8),
+                Jwts.SIG.HS512.key().build().getAlgorithm());
     }
 
     public String extractJwtTokenFromRequest(HttpServletRequest request) {
@@ -37,8 +34,7 @@ public class JwtParseUtil {
         if (StringUtils.hasText(headerValue) && headerValue.startsWith("Bearer ")) {
             String token = headerValue.substring(7);
 
-            if (token.isEmpty())
-                return null;
+            if (token.isEmpty()) return null;
 
             return token;
         }
@@ -47,18 +43,15 @@ public class JwtParseUtil {
     }
 
     public String getUserIdentifier(String jwtToken) {
-        return getClaimsFromJwtToken(jwtToken)
-                .getSubject();
+        return getClaimsFromJwtToken(jwtToken).getSubject();
     }
 
     public Date getIssuedAt(String jwtToken) {
-        return getClaimsFromJwtToken(jwtToken)
-                .getIssuedAt();
+        return getClaimsFromJwtToken(jwtToken).getIssuedAt();
     }
 
     public Date getExpiresAt(String jwtToken) {
-        return getClaimsFromJwtToken(jwtToken)
-                .getExpiration();
+        return getClaimsFromJwtToken(jwtToken).getExpiration();
     }
 
     public JwtType getJwtType(String jwtToken) {
@@ -71,14 +64,14 @@ public class JwtParseUtil {
 
     private Jws<Claims> getJws(String jwtToken) {
         try {
-            return Jwts.parser()
-                    .verifyWith(key)
-                    .build()
-                    .parseSignedClaims(jwtToken);
+            return Jwts.parser().verifyWith(key).build().parseSignedClaims(jwtToken);
         } catch (ExpiredJwtException e) {
             throw new AuthException(ErrorCode.JWT_EXPIRED);
-        } catch (UnsupportedJwtException | ClaimJwtException | SignatureException |
-                 MalformedJwtException | IllegalArgumentException e) {
+        } catch (UnsupportedJwtException
+                | ClaimJwtException
+                | SignatureException
+                | MalformedJwtException
+                | IllegalArgumentException e) {
             throw new AuthException(ErrorCode.JWT_ERROR);
         }
     }

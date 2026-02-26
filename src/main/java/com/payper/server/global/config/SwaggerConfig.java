@@ -16,13 +16,11 @@ public class SwaggerConfig {
         String securitySchemeName = "bearerAuth";
 
         return new OpenAPI()
-                .info(new Info()
-                        .title("Payper API")
-                        .version("v1")
-                        .description("Payper 서버 API 문서"))
+                .info(new Info().title("Payper API").version("v1").description("Payper 서버 API 문서"))
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
-                        .addSecuritySchemes(securitySchemeName,
+                        .addSecuritySchemes(
+                                securitySchemeName,
                                 new SecurityScheme()
                                         .name(securitySchemeName)
                                         .type(SecurityScheme.Type.HTTP)

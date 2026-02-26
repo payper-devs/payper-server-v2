@@ -3,7 +3,6 @@ package com.payper.server.post.dto;
 import org.springframework.data.domain.Sort;
 
 public enum PostSortType {
-
     POSTING_DATE("createdAt"),
     COMMENT_COUNT("commentCount"),
     LIKE_COUNT("likeCount"),
