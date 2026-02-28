@@ -13,7 +13,7 @@ import jakarta.persistence.MappedSuperclass;
 @AnalyzeClasses(
         packages = "com.payper.server",
         importOptions = {ImportOption.DoNotIncludeTests.class} // test 패키지의 테스트 클래스들은 제외
-)
+        )
 class EntityArchitectureTest {
 
     private static final String CONTROLLER_PKG = "..controller..";

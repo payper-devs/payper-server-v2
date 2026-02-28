@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @AnalyzeClasses(
         packages = "com.payper.server",
         importOptions = {ImportOption.DoNotIncludeTests.class} // test 패키지의 테스트 클래스들은 제외
-)
+        )
 class SwaggerArchitectureTest {
 
     private static final String CONTROLLER_PKG = "..controller..";

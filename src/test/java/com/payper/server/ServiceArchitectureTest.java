@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @AnalyzeClasses(
         packages = "com.payper.server",
         importOptions = {ImportOption.DoNotIncludeTests.class} // test 패키지의 테스트 클래스들은 제외
-)
+        )
 class ServiceArchitectureTest {
 
     private static final String CONTROLLER_PKG = "..controller..";

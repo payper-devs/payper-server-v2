@@ -11,7 +11,7 @@ import com.tngtech.archunit.lang.ArchRule;
 @AnalyzeClasses(
         packages = "com.payper.server",
         importOptions = {ImportOption.DoNotIncludeTests.class} // test 패키지의 테스트 클래스들은 제외
-)
+        )
 class RepositoryArchitectureTest {
 
     private static final String CONTROLLER_PKG = "..controller..";
@@ -29,9 +29,6 @@ class RepositoryArchitectureTest {
 
     /** repository 패키지에 있어야 한다. */
     @ArchTest
-    static ArchRule repositoryMustResideInRepositoryPackage = classes()
-            .that()
-            .haveSimpleNameContaining("Repository")
-            .should()
-            .resideInAPackage(REPOSITORY_PKG);
+    static ArchRule repositoryMustResideInRepositoryPackage =
+            classes().that().haveSimpleNameContaining("Repository").should().resideInAPackage(REPOSITORY_PKG);
 }

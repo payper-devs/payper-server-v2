@@ -1,5 +1,7 @@
 package com.payper.server;
 
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
+import static com.tngtech.archunit.lang.conditions.ArchConditions.implement;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -9,14 +11,11 @@ import com.tngtech.archunit.lang.ArchRule;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
-import static com.tngtech.archunit.lang.conditions.ArchConditions.implement;
-
 /** 컨트롤러 아키텍처 규칙 검증 테스트 */
 @AnalyzeClasses(
         packages = "com.payper.server",
         importOptions = {ImportOption.DoNotIncludeTests.class} // test 패키지의 테스트 클래스들은 제외
-)
+        )
 class ControllerArchitectureTest {
 
     private static final String CONTROLLER_PKG = "..controller..";
