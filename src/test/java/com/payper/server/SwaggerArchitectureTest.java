@@ -2,13 +2,17 @@ package com.payper.server;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 
+import com.tngtech.archunit.core.importer.ImportOption;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 /** Swagger Api 인터페이스 아키텍처 규칙 검증 테스트 */
-@AnalyzeClasses(packages = "com.payper.server")
+@AnalyzeClasses(
+        packages = "com.payper.server",
+        importOptions = {ImportOption.DoNotIncludeTests.class} // test 패키지의 테스트 클래스들은 제외
+)
 class SwaggerArchitectureTest {
 
     private static final String CONTROLLER_PKG = "..controller..";
