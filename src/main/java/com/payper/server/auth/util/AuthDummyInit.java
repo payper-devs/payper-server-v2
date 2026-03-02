@@ -1,6 +1,6 @@
 package com.payper.server.auth.util;
 
-import com.payper.server.auth.AuthService;
+import com.payper.server.auth.service.AuthService;
 import com.payper.server.user.entity.AuthType;
 import com.payper.server.user.entity.User;
 import jakarta.servlet.*;
